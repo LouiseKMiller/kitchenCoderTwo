@@ -1,0 +1,15 @@
+<div class="container">
+  <div class="containerTitle">
+    <h2>Recipes!</h2>
+  </div>
+  <ul>
+    {{#each recipe}}
+        <ul>
+          <div>
+          <span>{{this.id}}.&nbsp;</span>
+          {{this.title}}
+          </div>
+        </ul>
+      {{/each}}
+  </ul>
+</div>

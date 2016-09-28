@@ -1,0 +1,175 @@
+<style>
+.panel-body a
+    {
+        word-break:break-all;
+    }
+.sameLine {display: inline-block;}
+button {margin-left: 10px;
+        outline: none;
+        border: none;
+        background: none;}
+.categoryUL {display: none;}
+.inlineB {display: inline-block;
+          vertical-align: top;
+          width: 300px;}
+/*.ingredients {overflow: scroll; }*/
+.ingredients {height: 35em;
+              overflow:scroll;
+              border:7px solid;
+              padding:1%; }
+</style>
+
+  {{! ************* MAIN HEADING}}
+  <div class="container">
+    <div class="row"
+      <div class="col-md-12">
+        <div class="block">
+            <h1 class="heading"><span> UPDATE YOUR PANTRY </span>
+            </h1>
+
+            {{! ************* DIVISION FOR INGREDIENTS IN PANTRY}}
+                <div class="col-xs-12 col-md-4 ingredients">
+                  <!-- <div style="height: 29em; ">  -->
+                    <div class="container inlineB inPantry">
+                        <div class="containerTitle">
+                                <h2><strong>Ingredients that you have</strong></h2>   </br>
+                            <div class="ingredientContainer" id="inPantryList">
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+
+            {{! ************* DIVISION FOR FORM TO ADD INGREDIENT}}
+              <div class="col-xs-12 col-md-4 ingredients">
+                <!-- <div style="height: 29em"> -->
+                  <div class="container inlineB addIngredient">
+                    <div class="containerTitle">
+                      <form role="form" class="create-update-form" action="ingredient/update"method="POST">
+                        <div class="form-group">
+                          <!-- Here we create the text box for capturing the search term-->
+                          <label for="search"><h2><strong>Add Your Ingredient Here: </strong></h2>
+                          </label>
+                               </br>
+                          <input type="text" class="form-control" id="bu" name="name">
+                                </br>
+                              <div class="categoryContainer" id="categoryList">
+                                      <select name="category" class="form-control" id="categoryOptions">
+                                      </select>
+                              </div>
+                                  </br>
+                                  </br>
+                                  </br>
+                                 <button id="add" type="submit" class="btn btn-default" ><i class="fa fa-check-square"></i> Add Now</button>
+                                 <button type="button" class="btn btn-default" id="clearAll"><i class="fa fa-trash"></i> Clear Results</button>
+                        </div>
+                      </form>
+                  </div>
+                </div>
+              </div>
+
+                {{! ************* DIVISION FOR INGREDIENTS NOT IN PANTRY}}
+                    <div class="col-xs-12 col-md-4 ingredients">
+                        <!-- <div style="height: 29em"> -->
+                        <div class="container inlineB notInPantry">
+                          <div class="containerTitle">
+                                <h2><strong>Ingredients you do not have</strong></h2>
+                                </br>
+                                <div class="ingredientContainer" id="notInPantryList">
+                                </div>
+                          </div>
+                        </div>
+                    </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+{{!  ******************SCRIPT FILE HERE *****************}}
+<script>
+  var ingredientsHave = [];
+  var ingredientsNotHave = [];
+  var categories = [];
+  // {{! ******** FOR EACH INGREDIENT *************** }}
+    {{#each ingredient}}
+    {{! ******** remove spaces and special characters from category ***}}
+    {{! ****  because this term is used as a class name ***************}}
+    var cleanCat = "{{this.category}}";
+    cleanCat = cleanCat.replace(/[^A-Z0-9]/ig, "_");
+    if (categories.indexOf(cleanCat) == -1) {
+      categories.push(cleanCat);
+    }
+    {{! ******** create an object for each ingredient **************}}
+    var ing = {name: "{{this.name}}",
+              category: "{{this.category}}",
+              id: "{{this.id}}",
+              cleanCat: cleanCat};
+    {{! ************ IF NOT IN THE PANTRY *********}}
+    {{#unless this.inPantry}}
+      {{! ***** push that object into an array of all ingredients }}
+      ingredientsNotHave.push(ing);
+    {{/unless}}
+    {{! ************ IF IN THE PANTRY *********}}
+    {{#if this.inPantry}}
+      {{! ***** push that object into an array of all ingredients }}
+      ingredientsHave.push(ing);
+    {{/if}}
+  {{/each}}
+
+  {{! ********* NOW, WE CREATE A SEPERATE DIVISION FOR EACH CATEGORY ****}}
+  for (var i=0; i<categories.length; i++) {
+    var catDiv = $('<div>');
+    catDiv.append('<h4 class="categorySection">' + categories[i] + '</h4>');
+    catDiv.append('<ul class = "categoryUL + ' + categories[i] + '"></ul>');
+    $('#inPantryList').append(catDiv);
+  }
+
+  for (var i=0; i<categories.length; i++) {
+    var catDiv = $('<div>');
+    catDiv.append('<h4 class="categorySection">' + categories[i] + '</h4>');
+    catDiv.append('<ul class = "categoryUL ' + categories[i] + '"></ul>');
+    $('#notInPantryList').append(catDiv);
+
+  }
+
+  {{! ******** CREATE OPTIONS FOR SELECT LIST IN ADD INGREDIENT SECTION  }}
+  {{! ********* NOW, WE CAN GIVE OPTION FOR EACH CATEGORY ****}}
+
+  for (var i=0; i<categories.length; i++) {
+    var opt = '<option value="' + categories[i] + '">' + categories[i] + '</option>';
+
+    $('#categoryOptions').append(opt);
+  }
+
+
+
+   {{! *** THEN, WE CREATE THE HTML FOR EACH INPANTRY INGREDIENT ****}}
+   {{! ********* AND APPEND IT TO THE INPANTRY DIVISION *******}}
+  for (var i=0; i<ingredientsHave.length; i++) {
+    var ingredientLI = $('<li>');
+
+    ingredientLI.append('<span class="ingredientName sameLine">' + ingredientsHave[i].name + '</span>');
+    ingredientLI.append('<form class="sameLine" action="ingredient/update/' + ingredientsHave[i].id + '?_method=PUT" method="POST"><input type="hidden" name="inPantry" value="false"><button type="submit">x</button></form>');
+
+    $('#inPantryList').find('.' + ingredientsHave[i].cleanCat).append(ingredientLI);
+  }
+{{! ****** THEN, WE CREATE THE HTML FOR EACH NOTINPANTRY INGREDIENT ****}}
+   {{! ******* AND APPEND IT TO THE NOTINPANTRY CATEGORY DIVISION *******}}
+  for (var i=0; i<ingredientsNotHave.length; i++) {
+    var ingredientLI = $('<li>');
+
+    ingredientLI.append('<span class="ingredientName sameLine">' + ingredientsNotHave[i].name + '</span>');
+    ingredientLI.append('<form class="sameLine" action="ingredient/update/' + ingredientsNotHave[i].id + '?_method=PUT" method="POST"><input type="hidden" name="inPantry" value="true"><button type="submit">x</button></form>');
+
+    $('#notInPantryList').find('.' + ingredientsNotHave[i].cleanCat).append(ingredientLI);
+  }
+$(document).ready(function() {
+  $('.categorySection').on('click', function(event){
+    console.log("this was clicked");
+    event.stopPropagation();
+    $(this).closest('div').find('.categoryUL').slideToggle();
+    })
+});
+</script>
+

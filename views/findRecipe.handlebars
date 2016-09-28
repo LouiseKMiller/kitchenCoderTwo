@@ -1,0 +1,158 @@
+<style>
+h2 {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 30px;
+  color: green;
+}
+h4 {
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
+button {
+margin: 10px;
+margin-top: 15px;
+}
+#recipeForm {
+  text-align: center;
+  margin-top: 5px;
+}
+
+label {margin-top: 15px}
+
+#recipeTitle {
+  color: red;
+}
+
+#recipePic {
+  margin-left: auto;
+  margin-right: auto;
+  width: 250px;
+
+  height: 250px;
+}
+
+</style>
+
+<div class="row">
+  <div class="container col-md-6">
+    <div class="containerTitle">
+      <h2>Find a Recipe!</h2>
+    </div>
+
+    <form class="create-update-form" id="recipeForm" action="findRecipe" method="POST">
+      <div>
+        <h4 id="question1"> Would you like anything particular in your meal?</h4><br>
+        <input type="text" id="searchIngredient" name="searchTerm"><br>
+          
+          <label for="vegan">Vegan?</label><br>
+          <input type="radio" name="vegan" value="1">Yes
+          <input type="radio" name="vegan" value="0">No<br>
+
+          <label for="gluten">Gluten Free?</label><br>
+          <input type="radio" name="gluten" value="1">Yes
+          <input type="radio" name="gluten" value="0">No<br>
+
+          <label for="vegetarian">Vegetarian?</label><br>
+          <input type="radio" name="vegetarian" value="1">Yes
+          <input type="radio" name="vegetarian" value="0">No<br>
+
+        <button type="submit" value="Submit" id="findRecipe">Submit</button>
+      </div>
+    </form>
+  </div>
+  <div class="container col-md-6">
+  <h2>Enter your preferences and submit to find a recipe!</h2>
+
+
+   {{#each recipe}}
+    <h3>Recipe: </h3>
+    <h4 id="recipeTitle">{{title}}</h4>
+    <h4>Instructions: </h4>
+       {{this.instructions}}<br>
+    <img src={{image}} id="recipePic">
+   {{/each}}
+
+  </div>
+</div>
+
+
+
+
+{{!--blog start============================ --}}
+ <section id="blog">
+  <div class="container">
+   <div class="row">
+    <div class="col-md-12">
+     <div class="block">
+      <h1 class="heading"><span>Find Your Recipes</span></h1>
+
+
+
+       <ul>
+        <li class="wow fadeInLeft" data-wow-duration="300ms" data-wow-delay="300ms">
+          <div class="blog-img">
+           <img src="images/blog/blog-img-1.jpg" alt="blog-img">
+          </div>
+          <div class="content-right">
+           <h3>Chicken Pot Pie</h3>
+           <p>Prepared in true New England fash-ion. </p>
+          </div>
+        </li>
+        <li class="wow fadeInLeft" data-wow-duration="300ms" data-wow-delay="400ms">
+         <div class="blog-img">
+          <img src="images/blog/blog-img-2.jpg" alt="blog-img">
+         </div>
+         <div class="content-right">
+          <h3>Strawberry Waffles</h3>
+          <p>What a great treat for breakfast...</p>
+         </div>
+        </li>
+
+        <li class="wow fadeInLeft" data-wow-duration="300ms" data-wow-delay="500ms">
+         <div class="content-left">
+          <h3>Sirloins in Brown Sauce</h3>
+          <p>Tender strips of sirloin grilled to perfection...</p>
+         </div>
+         <div class="blog-img-2">
+          <img src="images/blog/blog-img-3.jpg" alt="blog-img">
+         </div>
+        </li>
+
+        <li class="wow fadeInLeft" data-wow-duration="300ms" data-wow-delay="600ms">
+         <div class="content-left">
+          <h3>Skewers and Sausages</h3>
+          <p>Appetizers for a party...</p>
+         </div>
+         <div class="blog-img-2">
+          <img src="images/blog/blog-img-4.jpg" alt="blog-img">
+         </div>
+        </li>
+
+        <li class="wow fadeInLeft" data-wow-duration="300ms" data-wow-delay="700ms">
+         <div class="blog-img">
+          <img src="images/blog/blog-img-5.jpg" alt="blog-img">
+         </div>
+         <div class="content-right">
+          <h3>Strawberry Pancakes</h3>
+          <p>A favorite for breakfast...</p>
+         </div>
+        </li>
+
+        <li class="wow fadeInUp" data-wow-duration="300ms" data-wow-delay="800ms">
+         <div class="blog-img">
+          <img src="images/blog/blog-img-6.jpg" alt="blog-img">
+         </div>
+         <div class="content-right">
+          <h3>Fresh Green Salad</h3>
+          <p>Refreshing for summer...</p>
+         </div>
+        </li>
+       </ul>
+
+       <a class="btn btn-default btn-more-info wow bounceIn" data-wow-duration="500ms" data-wow-delay="1200ms" href="#" role="button">More Info</a>
+      </div>
+     </div>{{!-- .col-md-12 close --}}
+    </div>{{!-- .row close --}}
+  </div>{{!-- .containe close --}}
+ </section>{{!-- #blog close --}}

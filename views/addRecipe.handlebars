@@ -1,0 +1,62 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<h3 style="text-align: center">Add Your Recipe!</h3>
+<br>
+<div class="container">
+<div class="row">
+<div class="col-md-5">
+<label for="ingredient">Add Ingredient: </label>
+<input type="text" class="form-control" id="ingredient">
+    <button type="submit" class="btn btn-default form-control" onclick="addList()">Add Ingredient</button>
+      <form role="form">
+    <br>
+    <label for="list">Ingredient List: </label>
+      <select multiple class="form-control" id="ingredientlist" size="11">
+      </select>
+</div>
+<div class="col-md-7">
+<label for="recipe">Recipe Name: </label>
+<input type="text" class="form-control" id="recipe" name="title">
+<br>
+<label for="preferences">Special Diet: </label>
+<br>
+<label class="checkbox-inline"><input type="checkbox" value="" name="vegan">Vegan </label>
+<label class="checkbox-inline"><input type="checkbox" value="" name="vegetarian">Vegetarian </label>
+<label class="checkbox-inline"><input type="checkbox" value="" name="glutenFree">Gluten-Free</label>
+</span>
+<br>
+<br>
+<label for="instructions">Instructions: </label>
+<textarea class="form-control" rows="8" id="instructions" name='instructions'></textarea>
+</div>
+</form>
+<div class="col-md-6 col-md-offset-5">
+<br>
+<br>
+<button type="submit" class="btn btn-default form-control" align="center" VALUE="Reload Page" onClick="history.go(0)">Add Recipe</button>
+</br>
+</br>
+</div>
+
+
+<script>
+
+function addList() {
+
+  var ing = document.getElementById("ingredient").value;
+  var inglist = document.getElementById("ingredientlist"); 
+  var option = document.createElement("option");
+  var ingString = String(ing);
+  option.text = ingString;
+  inglist.add(option);
+
+}
+
+function pushToDB() {
+  var recipeIngs = document.getElementById("ingredientlist");
+  var recipeIngList = [];
+  for (var i = 0; i < recipeIngs.length; i++){
+    recipeIngList.push(String(recipeIngs[i].innerHTML));
+  }
+  /// recipeIngList is a list that contains all of the ingredients 
+}
+</script>

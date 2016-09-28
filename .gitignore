@@ -1,0 +1,5 @@
+# ignore the following
+
+
+# leading slash matches the beginning of the pathname
+/node_modules

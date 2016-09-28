@@ -1,0 +1,24 @@
+{
+  "development": {
+    "username": "root",
+    "password": "",
+    "database": "kitchencodersdb",
+    "host": "localhost",
+    "dialect": "mysql"
+
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "wg8dd460fiay8etr",
+    "password": "jds59xizv3vjj0bl",
+    "database": "q3lh1nymbk9rq3iq",
+    "host": "gx97kbnhgjzh3efb.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+    "dialect": "mysql"
+  }
+}
