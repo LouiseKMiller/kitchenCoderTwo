@@ -195,9 +195,7 @@ router.get('/admin', function (req, res) {
 	});
 
 router.post('/admin/add', function (req, res) {
-	getRecipes(
-		{searchTerm: req.body.searchTerm,
-			category: req.body.vegan});
+	getRecipes(req.body);
 	res.redirect('/home');
 
 });

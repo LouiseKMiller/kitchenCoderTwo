@@ -1,5 +1,14 @@
 var path = require('path');
 
+
+// ============================================================
+// GETRECIPES
+// This module is used to get recipes from the Spoonacular API and
+// load them into the database
+// Query terms for the API call are set by user in the admin page
+// ============================================================
+
+
 module.exports = function(searchParams)
 {
 
@@ -13,10 +22,11 @@ var express = require('express');
 // import Node File System module body-parser - body parsing middleware.  It parses incoming request bodies in a middleware before your handlers
 var bodyParser = require('body-parser');
 
+
+
+// PREPARE OUR TABLES
+// =======================================================================
 var models = require('./models');
-
-
-// PREPARE OUR TABLES in MySQL)
 /// extract our sequelize connection from the models object, to avoid confusion
 var seqConnection = models.sequelize;
 
@@ -24,9 +34,8 @@ var seqConnection = models.sequelize;
 var unirest = require('unirest');
 var fs = require('fs');
 
-// PREPARE OUR TABLES
+// global variables
 // =======================================================================
-
 var recipeSearchResults = [];
 var oneRecipeData = {};
 var recipeID ="";
@@ -201,24 +210,36 @@ function getInstructions(idTerm){
 //========================================================================
 //
 // First we run this query so that we can drop our tables even though they have foreign keys
-
-var searchTerm = searchParams.searchTerm;
-var veganValue = searchParams.veganValue;
-
 seqConnection.query('SET FOREIGN_KEY_CHECKS = 0')
 
 
+
+// Query terms set by user in admin page
+console.log("searchParams", searchParams);
+
+// BUILD QUERY STRING
+var queryURL = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search?limitLicense=false&number=10&offset=0";
+if (!searchParams.searchTerm=="") {queryURL += ("&query=" + searchParams.searchTerm)};
+if (!searchParams.cuisine=="any") {queryURL += ("&cuisine=" + searchParams.cuisine.join("%2C+"))};
+if (!searchParams.diet=="any") {queryURL += ("&diet=" + searchParams.diet)};
+if (!searchParams.type=="any") {queryURL += ("&type=" + searchParams.type)};
+if (!searchParams.excludeIngredients=="") {queryURL += ("&excludeIngredients=" + searchParams.excludeIngredients.replace(", ", "%2C+"))};
+if (!searchParams.intolerances=="none") {queryURL += ("&intolerances=" + searchParams.intolerances.join("%2C+"))};
+
+console.log("query String", queryURL);
+
 // SEARCH FOR 10 RECIPES -
-unirest.get("https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search?limitLicense=false&number=10&offset=0&query=" + searchTerm + "&type=main+course")
-.header("X-Mashape-Key", "1pb1awVrWQmsh5cGX7uf2JqubVkIp1ibFl8jsnOPSRyTSkfXtR")
-.end(function (result) {
+ unirest.get(queryURL)
+ .header("X-Mashape-Key", "1pb1awVrWQmsh5cGX7uf2JqubVkIp1ibFl8jsnOPSRyTSkfXtR")
+ .end(function (result) {
 
-// STORE RESULTS IN recipeResults array
-    recipeSearchResults = result.body.results;
+console.log("results", result.body.results);
+// // STORE RESULTS IN recipeResults array
+//     recipeSearchResults = result.body.results;
 
-    processAllRecipes(recipeSearchResults);
+//     processAllRecipes(recipeSearchResults);
 
-});
+ });
 
 
 
