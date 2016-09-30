@@ -4,6 +4,7 @@
       <h2>Go Get Some Recipes For The Database</h2>
     </div>
 
+    <h4 id="status">STATUS: {{title}}</h4>
 
     <form class="create-update-form" action="../admin/add" method="POST">
 
@@ -14,33 +15,32 @@
 
       <div class="form-group">
         <label for="cuisine">Type of Cuisine</label><br>
-        <p>Hold down the Ctrl (windows) / Command (Mac) button to select multiple options.</p>
-        <select class="form-control" name="cuisine" multiple>
-          <option value="any">Any</option>
-          <option value="african">African</option>
-          <option value="american">American</option>
-          <option value="british">British</option>
-          <option value="cajun">Cajun</option>
-          <option value="caribbean">Caribbean</option>
-          <option value="chinese">Chinese</option>
-          <option value="eastern+european">Eastern European</option>
-          <option value="german">German</option>
-          <option value="greek">Greek</option>
-          <option value="indian">Indian</option>
-          <option value="irish">Irish</option>
-          <option value="italian">Italian</option>
-          <option value="french">French</option>
-          <option value="japanese">Japanese</option>
-          <option value="jewish">Jewish</option>
-          <option value="korean">Korean</option>
-          <option value="latin+american">Latin American</option>
-          <option value="mexican">Mexican</option>
-          <option value="middle+eastern">Middle Eastern</option>
-          <option value="southern">Southern</option>
-          <option value="spanish">Spanish</option>
-          <option value="thai">Thai</option>
-          <option value="vietnamese">Vietnamese</option>
-          <option value="nordic">Nordic</option>
+        <select class="form-control" name="cuisine">
+          <option value="any" selected>Any</option>
+          <option value="African">African</option>
+          <option value="American">American</option>
+          <option value="British">British</option>
+          <option value="Cajun">Cajun</option>
+          <option value="Caribbean">Caribbean</option>
+          <option value="Chinese">Chinese</option>
+          <option value="Eastern+European">Eastern European</option>
+          <option value="German">German</option>
+          <option value="Greek">Greek</option>
+          <option value="Indian">Indian</option>
+          <option value="Irish">Irish</option>
+          <option value="Italian">Italian</option>
+          <option value="French">French</option>
+          <option value="Japanese">Japanese</option>
+          <option value="Jewish">Jewish</option>
+          <option value="Korean">Korean</option>
+          <option value="Latin+American">Latin American</option>
+          <option value="Mexican">Mexican</option>
+          <option value="Middle+Eastern">Middle Eastern</option>
+          <option value="Southern">Southern</option>
+          <option value="Spanish">Spanish</option>
+          <option value="Thai">Thai</option>
+          <option value="Vietnamese">Vietnamese</option>
+          <option value="Nordic">Nordic</option>
         </select>
       </div>
 
@@ -50,9 +50,6 @@
           <option value="any">Any</option>
           <option value="vegan">Vegan</option>
           <option value="vegetarian">Vegetarian</option>
-          <option value="lacto+vegetarian">Lacto Vegetarian</option>
-          <option value="ovo+vegetarian">Ovo Vegetarian</option>
-          <option value="pescetarian">Pescetarian</option>
         </select>
       </div>
 
@@ -83,7 +80,7 @@
         <label for="intolerances">Intolerances</label><br>
         <p>Hold down the Ctrl (windows) / Command (Mac) button to select multiple options.</p>
         <select class="form-control" name="intolerances" multiple>
-          <option value="none">None</option>
+          <option value="none" selected>None</option>
           <option value="dairy">Dairy</option>
           <option value="egg">Egg</option>
           <option value="gluten">Gluten</option>

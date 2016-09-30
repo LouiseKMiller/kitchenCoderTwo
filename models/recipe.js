@@ -3,9 +3,13 @@ module.exports = function(sequelize, DataTypes) {
   var Recipe = sequelize.define('Recipe', {
     title: DataTypes.STRING,
     image: DataTypes.STRING,
+    cuisine: DataTypes.STRING,
+    type: DataTypes.STRING,
+    intolerances: DataTypes.STRING,
     vegetarian: DataTypes.BOOLEAN,
     vegan: DataTypes.BOOLEAN,
     glutenFree: DataTypes.BOOLEAN,
+    dairyFree: DataTypes.BOOLEAN,
     servings: DataTypes.INTEGER,
     preparationMinutes: DataTypes.INTEGER,
     cookingMinutes: DataTypes.INTEGER,

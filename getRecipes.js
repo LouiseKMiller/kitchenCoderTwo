@@ -1,6 +1,3 @@
-var path = require('path');
-
-
 // ============================================================
 // GETRECIPES
 // This module is used to get recipes from the Spoonacular API and
@@ -9,20 +6,11 @@ var path = require('path');
 // ============================================================
 
 
-module.exports = function(searchParams)
-{
-
 // ============================================================
 // DEPENDENCIES
 // Node Package Modules
 // ============================================================
-
-// import Node File System module express - a fast, unopinionated, minimalist web framework
-var express = require('express');
-// import Node File System module body-parser - body parsing middleware.  It parses incoming request bodies in a middleware before your handlers
-var bodyParser = require('body-parser');
-
-
+var unirest = require('unirest');
 
 // PREPARE OUR TABLES
 // =======================================================================
@@ -30,19 +18,137 @@ var models = require('./models');
 /// extract our sequelize connection from the models object, to avoid confusion
 var seqConnection = models.sequelize;
 
-// Include the unirest npm package
-var unirest = require('unirest');
-var fs = require('fs');
-
 // global variables
 // =======================================================================
 var recipeSearchResults = [];
 var oneRecipeData = {};
 var recipeID ="";
-var searchTerm = "";
 var recipeIngredients = [];
+var cuisine = "";
+var type = "";
+var intolerances = "";
 
 
+module.exports = function(searchParams, cb)
+{
+//========================================================================
+//          THIS IS WHERE THE ACTION STARTS
+//========================================================================
+//
+
+// BUILD QUERY STRING for Spoonsacular API using input from admin page
+// Also, save certain search parameters to database so we can save them later with 
+// the other recipe information in the database.
+
+var queryURL = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search?limitLicense=false&number=10&offset=0";
+
+console.log("searchParams: ", searchParams);
+if (searchParams.searchTerm!=="") {queryURL += ("&query=" + searchParams.searchTerm.replace(" ", "+").replace(",", "%2C"))};
+if (searchParams.cuisine!=="any") {
+    queryURL += ("&cuisine=" + searchParams.cuisine);
+    cuisine = searchParams.cuisine.replace("+", " ");
+    };
+if (searchParams.diet!=="any") {queryURL += ("&diet=" + searchParams.diet);};
+if (searchParams.type!=="any") {
+    queryURL += ("&type=" + searchParams.type);
+    type = searchParams.type;
+    };
+if (searchParams.excludeIngredients!=="") {queryURL += ("&excludeIngredients=" + searchParams.excludeIngredients.trim().replace(",", "%2C").replace(" ", "+"))};
+if (searchParams.intolerances!=="none") {
+    queryURL += ("&intolerances=" + ((typeof searchParams.intolerances === 'string') ? 
+            searchParams.intolerances : 
+            searchParams.intolerances.join("%2C+")));
+    intolerances = (typeof searchParams.intolerances === 'string') ? 
+            searchParams.intolerances : 
+            searchParams.intolerances.join(", ").replace("+", " ");
+};
+console.log("queryURL: ", queryURL);
+
+// SEARCH FOR 10 RECIPES -
+ unirest.get(queryURL)
+ .header("X-Mashape-Key", "1pb1awVrWQmsh5cGX7uf2JqubVkIp1ibFl8jsnOPSRyTSkfXtR")
+ .end(function (result) {
+    // If no results found, run the call back function with message of failure.
+    if (result.body.results.length <= 0) {
+        cb("No Recipes Found. Try Again!");
+        }
+    // STORE RESULTS IN recipeResults array
+    recipeSearchResults = result.body.results;
+    console.log("recipeSearchResults: ", recipeSearchResults);
+    // NOW CALL THE MOTHER OF ALL FUNCTIONS FOR THIS MODULE
+    processAllRecipes(recipeSearchResults);
+    // then run the call back function with a message of success!
+    cb("recipes found and entered into database!");
+ });
+
+} //end of getRecipes function
+
+
+//========================================================================
+//          HERE ARE ALL THE FUNCTIONS
+//========================================================================
+//
+
+//===========================================================
+//  processAllRecipes FUNCTION
+//
+//  THE FUNCTION FROM WHICH ALL OTHER FUNCTIONS ARE CALLED
+//  - INPUT: the results of the search for 10 recipes 
+//  - ACTION:  grabs the detailed information for all 10 recipes
+//             and stores the information in the database 
+//  - OUTPUT:  confirmation that the recipes have been saved to the database
+//
+function processAllRecipes(recipes){
+    var j=0;
+    function outerloop(){
+//        if (j < recipes.length){
+        if (j < 1){
+            // FOR EACH RECIPE IN recipeResults array, you need to do two searches
+            recipeID = recipes[j].id;
+
+
+            //first you need to search by recipeID and find the recipe information
+            unirest.get("https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/" + recipeID + "/information?includeNutrition=false")
+            .header("X-Mashape-Key", "1pb1awVrWQmsh5cGX7uf2JqubVkIp1ibFl8jsnOPSRyTSkfXtR")
+            .end(function (result) {
+
+                oneRecipeData = {
+                    title: result.body.title,
+                    image: result.body.image,
+                    cuisine: cuisine,
+                    type: type,
+                    intolerances: intolerances,
+                    vegetarian: result.body.vegetarian,
+                    vegan: result.body.vegan,
+                    glutenFree: result.body.glutenFree,
+                    dairyFree: result.body.dairyFree,
+                    servings: result.body.servings,
+                    preparationMinutes: result.body.preparationMinutes,
+                    cookingMinutes: result.body.cookingMinutes,
+                    sourceUrl: result.body.sourceUrl,
+                    extendedIngredients: result.body.extendedIngredients,
+                    spoonID: recipeID,
+                    instructions: ""
+
+                };
+
+                //
+                getInstructions(recipeID);
+
+            j++;
+            outerloop();
+            });
+        } else {
+            console.log("outer loop done");
+        }
+
+    }
+    outerloop();
+}
+
+//========================================================================
+//          addToTable Function
+//
 // ON A PER RECIPE BASIS, ADD INGREDIENTS TO THE DATABASE IF THEY ARE NEW
 // MUST LET EACH findOrCreate COMPLETE BEFORE INITIATING THE NEXT ONE FOR
 // THE NEXT INGREDIENT.  OTHERWISE, YOU MAY NOT FIND A PRIOR INGREDIENT
@@ -50,7 +156,8 @@ var recipeIngredients = [];
 function addToTable(ingredients, newRecipe, recipeIngredients){
   var i = 0;
   function forloop(){
-    if(i<ingredients.length){
+//    if(i<ingredients.length){
+    if (i<1){
         models.Ingredient.findOrCreate({where: {spoonID: ingredients[i].spoonID}, defaults: {name: ingredients[i].name, category: ingredients[i].category}})
         .then(function(){
             i++;
@@ -64,11 +171,18 @@ function addToTable(ingredients, newRecipe, recipeIngredients){
   forloop();
 }
 
-
+//========================================================================
+//          createRecipe Function
+//
+//
+//
 function createRecipe(newRecipe, recipeIngredients){
     return models.Recipe.create(
         {title: newRecipe.title,
         image: newRecipe.image,
+        cuisine: newRecipe.cuisine,
+        type: newRecipe.type,
+        intolerances: newRecipe.intolerances,
         vegetarian: newRecipe.vegetarian,
         vegan: newRecipe.vegan,
         glutenFree: newRecipe.glutenFree,
@@ -76,7 +190,8 @@ function createRecipe(newRecipe, recipeIngredients){
         preparationMinutes: newRecipe.preparationMinutes,
         cookingMinutes: newRecipe.cookingMinutes,
         sourceUrl: newRecipe.sourceUrl,
-        instructions: newRecipe.instructions
+        instructions: newRecipe.instructions,
+        spoonID: newRecipe.spoonID
         })
    .then(function(recipe){
         var ingredientNames =[];
@@ -101,52 +216,6 @@ function createRecipe(newRecipe, recipeIngredients){
 }
 
 
-function processAllRecipes(recipes){
-   var j=0;
-    function outerloop(){
- //
-        if (j < recipes.length){
-
-
-// FOR EACH RECIPE IN recipeResults array, you need to do two searches
-            recipeID = recipes[j].id;
-
-
-    //first you need to search by recipeID and find the recipe information
-            unirest.get("https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/" + recipeID + "/information?includeNutrition=false")
-            .header("X-Mashape-Key", "1pb1awVrWQmsh5cGX7uf2JqubVkIp1ibFl8jsnOPSRyTSkfXtR")
-            .end(function (result) {
-
-
-                oneRecipeData = {
-                    title: result.body.title,
-                    image: result.body.image,
-                    vegetarian: result.body.vegetarian,
-                    vegan: result.body.vegan,
-                    glutenFree: result.body.glutenFree,
-                    servings: result.body.servings,
-                    preparationMinutes: result.body.preparationMinutes,
-                    cookingMinutes: result.body.cookingMinutes,
-                    sourceUrl: result.body.sourceUrl,
-                    extendedIngredients: result.body.extendedIngredients,
-                    spoonID: recipeID,
-                    instructions: ""
-
-                };
-
-                //
-                getInstructions(recipeID);
-
-            j++;
-            outerloop();
-            });
-        } else {
-            console.log("outer loop done");
-        }
-
-    }
-    outerloop();
-}
 // ADD A RECIPE
 
 function processOneRecipe(newRecipe){
@@ -205,43 +274,3 @@ function getInstructions(idTerm){
         return processOneRecipe(oneRecipeData);
     });
 }
-//========================================================================
-//          THIS IS WHERE THE ACTION STARTS
-//========================================================================
-//
-// First we run this query so that we can drop our tables even though they have foreign keys
-seqConnection.query('SET FOREIGN_KEY_CHECKS = 0')
-
-
-
-// Query terms set by user in admin page
-console.log("searchParams", searchParams);
-
-// BUILD QUERY STRING
-var queryURL = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search?limitLicense=false&number=10&offset=0";
-if (!searchParams.searchTerm=="") {queryURL += ("&query=" + searchParams.searchTerm)};
-if (!searchParams.cuisine=="any") {queryURL += ("&cuisine=" + searchParams.cuisine.join("%2C+"))};
-if (!searchParams.diet=="any") {queryURL += ("&diet=" + searchParams.diet)};
-if (!searchParams.type=="any") {queryURL += ("&type=" + searchParams.type)};
-if (!searchParams.excludeIngredients=="") {queryURL += ("&excludeIngredients=" + searchParams.excludeIngredients.replace(", ", "%2C+"))};
-if (!searchParams.intolerances=="none") {queryURL += ("&intolerances=" + searchParams.intolerances.join("%2C+"))};
-
-console.log("query String", queryURL);
-
-// SEARCH FOR 10 RECIPES -
- unirest.get(queryURL)
- .header("X-Mashape-Key", "1pb1awVrWQmsh5cGX7uf2JqubVkIp1ibFl8jsnOPSRyTSkfXtR")
- .end(function (result) {
-
-console.log("results", result.body.results);
-// // STORE RESULTS IN recipeResults array
-//     recipeSearchResults = result.body.results;
-
-//     processAllRecipes(recipeSearchResults);
-
- });
-
-
-
-
-} //end of getRecipes function

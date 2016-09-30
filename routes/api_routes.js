@@ -191,13 +191,15 @@ router.get('/addRecipe', function (req, res) {
 //
 //
 router.get('/admin', function (req, res) {
+		var hbsobject = {"What kind of recipes are you looking for?"};
 		res.render('admin');
 	});
 
 router.post('/admin/add', function (req, res) {
-	getRecipes(req.body);
-	res.redirect('/home');
-
+	getRecipes(req.body, function(result){
+		var hbsobject = {result};
+		res.render('admin', hbsobject);
+	});
 });
 
 //******************************************************
