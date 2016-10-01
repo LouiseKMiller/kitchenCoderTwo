@@ -57,7 +57,7 @@ router.get('/home', function (req, res) {
 // 	Ingredient.findAll({where: {inPantry : false}})
 // 	.then (function(ingredients){
 // 		Recipeingredients.findall({
-// 			where: 
+// 			where:
 // 		})
 // 	})
 
@@ -166,9 +166,9 @@ router.post('/findRecipe', function (req, res) {
 	return Ingredient.find({where: {name: req.body.searchTerm}})
 	.then(function(ingredient){
 		var searchObject = {
-			cuisine: {$or: {$eq: req.body.cuisine, $eq: ""}},
-			type: {$or: {$eq: req.body.type, $eq: ""}}
-		}
+			type: {$in: ["", req.body.type]},
+			cuisine: {$in: ["", req.body.cuisine]}
+		};
 		searchObject.vegan = ((req.body.vegan == ("0" || " 1")) ?
 			req.body.vegan : {$ne: "3"});
 		searchObject.glutenFree = ((req.body.gluten == ("0" || " 1" )) ?
@@ -177,7 +177,7 @@ router.post('/findRecipe', function (req, res) {
 			req.body.vegetarian : {$ne: "3"});
 		searchObject.canMake = ((req.body.canMake == "1") ? req.body.canMake : {$ne: "3"});
 
-		return ingredient.getRecipes({where:searchObject})
+		return ingredient.getRecipes({where: searchObject})
 	})
 	.then (function(recipes){
 		var hbsObject = {recipes};

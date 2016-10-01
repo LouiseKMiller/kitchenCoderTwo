@@ -24,9 +24,9 @@ var recipeSearchResults = [];
 var oneRecipeData = {};
 var recipeID ="";
 var recipeIngredients = [];
-var cuisine = "";
-var type = "";
-var intolerances = "";
+var cuisine;
+var type;
+var intolerances;
 
 
 module.exports = function(searchParams, cb)
@@ -35,9 +35,12 @@ module.exports = function(searchParams, cb)
 //          THIS IS WHERE THE ACTION STARTS
 //========================================================================
 //
+cuisine = "";
+type = "";
+intolerances = "";
 
 // BUILD QUERY STRING for Spoonsacular API using input from admin page
-// Also, save certain search parameters to database so we can save them later with 
+// Also, save certain search parameters to database so we can save them later with
 // the other recipe information in the database.
 
 var queryURL = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search?limitLicense=false&number=10&offset=0";
@@ -55,11 +58,11 @@ if (searchParams.type!=="any") {
     };
 if (searchParams.excludeIngredients!=="") {queryURL += ("&excludeIngredients=" + searchParams.excludeIngredients.trim().replace(",", "%2C").replace(" ", "+"))};
 if (searchParams.intolerances!=="none") {
-    queryURL += ("&intolerances=" + ((typeof searchParams.intolerances === 'string') ? 
-            searchParams.intolerances : 
+    queryURL += ("&intolerances=" + ((typeof searchParams.intolerances === 'string') ?
+            searchParams.intolerances :
             searchParams.intolerances.join("%2C+")));
-    intolerances = (typeof searchParams.intolerances === 'string') ? 
-            searchParams.intolerances : 
+    intolerances = (typeof searchParams.intolerances === 'string') ?
+            searchParams.intolerances :
             searchParams.intolerances.join(", ").replace("+", " ");
 };
 console.log("queryURL: ", queryURL);
@@ -94,9 +97,9 @@ console.log("queryURL: ", queryURL);
 //  processAllRecipes FUNCTION
 //
 //  THE FUNCTION FROM WHICH ALL OTHER FUNCTIONS ARE CALLED
-//  - INPUT: the results of the search for 10 recipes 
+//  - INPUT: the results of the search for 10 recipes
 //  - ACTION:  grabs the detailed information for all 10 recipes
-//             and stores the information in the database 
+//             and stores the information in the database
 //  - OUTPUT:  confirmation that the recipes have been saved to the database
 //
 function processAllRecipes(recipes){
@@ -223,7 +226,7 @@ function createRecipe(newRecipe, recipeIngredients, canMakeFlag){
 
                     }
                 });
-        }        
+        }
    })
 }
 
@@ -272,7 +275,7 @@ function getInstructions(idTerm){
             for (var i=0; i<steps.length; i++) {
                 instructions += (steps[i].step + " ");
                 instructions += "<br>";
-            }        
+            }
 
         }
         oneRecipeData.instructions = instructions;
