@@ -52,6 +52,18 @@ router.get('/home', function (req, res) {
 //    (4) make a change to an ingredient already in the database (other than inStock)
 //    (5) delete an ingredient
 //
+// function findAvailRecipes(){
+// 	Ingredient.findAll({where: {inPantry : false}})
+// 	.then (function(ingredients){
+// 		Recipeingredients.findall({
+// 			where: 
+// 		})
+// 	})
+
+// }
+
+
+
 // GET REQUEST TO URI  - /INGREDIENT
 // find all ingredients
 // and pass to handlebars to process further
@@ -77,15 +89,7 @@ router.post('/ingredient/update', function (req, res) {
 			res.redirect('/ingredient');
 		});
 });
-router.get('/ingredient', function (req, res) {
 
-	Ingredient.findAll()
-	.then (function(ingredient){
-		console.log("INGREDIENT", ingredient);
-		var hbsObject = {ingredient};
-		res.render('ingredient', hbsObject);
-	});
-});
 // user identifies an ingredient and a change to the inStock status
 // we update the database with that information
 
@@ -136,17 +140,24 @@ router.get('/findRecipe', function (req, res) {
 });
 
 router.post('/findRecipe', function (req, res) {
-	var condition = 'id=' + req.params.id;
-
-	Recipe.findAll({
-		where:{
-		vegan: req.body.vegetarian,
-		glutenFree: req.body.gluten
-	  }
+	return Ingredient.find({where: {name: req.body.searchTerm}})
+	.then(function(ingredient){
+		return ingredient.getRecipes({where:{
+			vegan: req.body.vegan,
+			glutenFree: req.body.gluten,
+			vegetarian: req.body.vegetarian,
+			cuisine: req.body.cuisine,
+			type: req.body.type
+	  		}
+		})
 	})
-	.then (function(recipe){
-		var hbsObject = {recipe};
+	.then (function(recipes){
+		console.log("you are here and recipe is: ", recipes);
+		var hbsObject = {recipes};
 		res.render('findRecipe', hbsObject);
+	})
+	.catch(function(error) {
+		console.log("error: ", error)
 	})
 });
 
@@ -191,13 +202,15 @@ router.get('/addRecipe', function (req, res) {
 //
 //
 router.get('/admin', function (req, res) {
-		var hbsobject = {"What kind of recipes are you looking for?"};
-		res.render('admin');
+		var message = "What kind of recipes are you looking for?";
+		var hbsobject = {message};
+		res.render('admin', hbsobject);
 	});
 
 router.post('/admin/add', function (req, res) {
-	getRecipes(req.body, function(result){
-		var hbsobject = {result};
+	getRecipes(req.body, function(message){
+		var hbsobject = {message};
+		console.log("you are here:", message);
 		res.render('admin', hbsobject);
 	});
 });

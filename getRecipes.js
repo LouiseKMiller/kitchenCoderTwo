@@ -69,16 +69,17 @@ console.log("queryURL: ", queryURL);
  .header("X-Mashape-Key", "1pb1awVrWQmsh5cGX7uf2JqubVkIp1ibFl8jsnOPSRyTSkfXtR")
  .end(function (result) {
     // If no results found, run the call back function with message of failure.
-    if (result.body.results.length <= 0) {
-        cb("No Recipes Found. Try Again!");
-        }
+    if (result.body.results.length > 0) {
     // STORE RESULTS IN recipeResults array
-    recipeSearchResults = result.body.results;
-    console.log("recipeSearchResults: ", recipeSearchResults);
-    // NOW CALL THE MOTHER OF ALL FUNCTIONS FOR THIS MODULE
-    processAllRecipes(recipeSearchResults);
-    // then run the call back function with a message of success!
-    cb("recipes found and entered into database!");
+        recipeSearchResults = result.body.results;
+        console.log("recipeSearchResults: ", recipeSearchResults);
+        // NOW CALL THE MOTHER OF ALL FUNCTIONS FOR THIS MODULE
+        processAllRecipes(recipeSearchResults, cb);
+        // then run the call back function with a message of success!
+        cb("recipes found and entered into database!");
+    } else {
+        cb("No Recipes Found. Try Again!");
+    }
  });
 
 } //end of getRecipes function
@@ -105,7 +106,6 @@ function processAllRecipes(recipes){
         if (j < 1){
             // FOR EACH RECIPE IN recipeResults array, you need to do two searches
             recipeID = recipes[j].id;
-
 
             //first you need to search by recipeID and find the recipe information
             unirest.get("https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/" + recipeID + "/information?includeNutrition=false")
@@ -177,7 +177,7 @@ function addToTable(ingredients, newRecipe, recipeIngredients){
 //
 //
 function createRecipe(newRecipe, recipeIngredients){
-    return models.Recipe.create(
+    return models.Recipe.findOrCreate({where: {spoonID: newRecipe.spoonID}, defaults:
         {title: newRecipe.title,
         image: newRecipe.image,
         cuisine: newRecipe.cuisine,
@@ -192,26 +192,28 @@ function createRecipe(newRecipe, recipeIngredients){
         sourceUrl: newRecipe.sourceUrl,
         instructions: newRecipe.instructions,
         spoonID: newRecipe.spoonID
-        })
-   .then(function(recipe){
-        var ingredientNames =[];
+        }})
+   .spread(function(recipe, created){
+        if (created) {
+            var ingredientNames =[];
+            var ingredientAmounts = [];
+            for (var x=0; x<recipeIngredients.length; x++){
+                ingredientNames.push(recipeIngredients[x].name);
+                var ingredientAmount = {amount: recipeIngredients[x].amount, unit: recipeIngredients[x].unit};
+                ingredientAmounts.push(ingredientAmount);
+            }
+            return models.Ingredient.findAll({where: {name: ingredientNames}})
 
-        var ingredientAmounts = [];
-        for (var x=0; x<recipeIngredients.length; x++){
-            ingredientNames.push(recipeIngredients[x].name);
-            var ingredientAmount = {amount: recipeIngredients[x].amount, unit: recipeIngredients[x].unit};
-            ingredientAmounts.push(ingredientAmount);
-        }
-       return models.Ingredient.findAll({where: {name: ingredientNames}})
+                .then(function(ingredients){
 
-            .then(function(ingredients){
+                    for (var i=0; i<ingredients.length; i++) {
+                        var option = ingredientAmounts[i];
+                        console.log("***recipe: ", recipe);
+                        {recipe.addIngredient(ingredients[i],ingredientAmounts[i])};
 
-                for (var i=0; i<ingredients.length; i++) {
-                    var option = ingredientAmounts[i];
-                    {recipe.addIngredient(ingredients[i],ingredientAmounts[i])};
-
-                }
-       })
+                    }
+                });
+        }        
    })
 }
 

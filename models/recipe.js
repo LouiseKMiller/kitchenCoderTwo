@@ -15,7 +15,7 @@ module.exports = function(sequelize, DataTypes) {
     cookingMinutes: DataTypes.INTEGER,
     sourceUrl: DataTypes.STRING,
     instructions: DataTypes.TEXT,
-    isMatch: {type: DataTypes.BOOLEAN,
+    canMake: {type: DataTypes.BOOLEAN,
               defaultValue: false},
     spoonID: DataTypes.INTEGER
   }, {

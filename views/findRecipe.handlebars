@@ -57,6 +57,57 @@ label {margin-top: 15px}
           <input type="radio" name="vegetarian" value="1">Yes
           <input type="radio" name="vegetarian" value="0">No<br>
 
+          <div class="form-group">
+            <label for="cuisine">Type of Cuisine</label><br>
+            <select class="form-control" name="cuisine">
+              <option value="any" selected>Any</option>
+              <option value="African">African</option>
+              <option value="American">American</option>
+              <option value="British">British</option>
+              <option value="Cajun">Cajun</option>
+              <option value="Caribbean">Caribbean</option>
+              <option value="Chinese">Chinese</option>
+              <option value="Eastern+European">Eastern European</option>
+              <option value="German">German</option>
+              <option value="Greek">Greek</option>
+              <option value="Indian">Indian</option>
+              <option value="Irish">Irish</option>
+              <option value="Italian">Italian</option>
+              <option value="French">French</option>
+              <option value="Japanese">Japanese</option>
+              <option value="Jewish">Jewish</option>
+              <option value="Korean">Korean</option>
+              <option value="Latin+American">Latin American</option>
+              <option value="Mexican">Mexican</option>
+              <option value="Middle+Eastern">Middle Eastern</option>
+              <option value="Southern">Southern</option>
+              <option value="Spanish">Spanish</option>
+              <option value="Thai">Thai</option>
+              <option value="Vietnamese">Vietnamese</option>
+              <option value="Nordic">Nordic</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="type">Type of Meal</label><br>
+            <select class="form-control" name="type">
+              <option value="any">Any</option>
+              <option value="appetizer">Appetizer</option>
+              <option value="beverage">Beverage</option>
+              <option value="bread">Bread</option>
+              <option value="breakfast">Breakfast</option>
+              <option value="dessert">Dessert</option>
+              <option value="drink">Drink</option>
+              <option value="main+course">Main Course</option>
+              <option value="salad">Salad</option>
+              <option value="sauce">Sauce</option>
+              <option value="side+dish">Side Dish</option>
+              <option value="soup">Soup</option>
+            </select>
+          </div>
+
+
+
         <button type="submit" value="Submit" id="findRecipe">Submit</button>
       </div>
     </form>
@@ -65,7 +116,7 @@ label {margin-top: 15px}
   <h2>Enter your preferences and submit to find a recipe!</h2>
 
 
-   {{#each recipe}}
+   {{#each recipes}}
     <h3>Recipe: </h3>
     <h4 id="recipeTitle">{{title}}</h4>
     <h4>Instructions: </h4>
