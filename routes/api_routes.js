@@ -12,6 +12,7 @@ var getRecipes = require('../getRecipes');
 
 
 
+
 //******************************************************
 //  ROUTE FOR ROOT AND HOME
 //******************************************************
@@ -97,6 +98,28 @@ router.put('/ingredient/update/:id', function (req, res) {
 	var condition = 'id = ' + req.params.id;
 	Ingredient.update({inPantry: req.body.inPantry }, {where: {id: req.params.id}})
 	.then (function () {
+		// see if any recipes' canMake status is affected
+		Recipe.findAll({
+		include:[{
+			model: Ingredient,
+			where: {id: req.params.id}
+			}]
+		})
+		.then (function(recipes){
+			recipes.forEach(function(recipe){
+				if (req.body.inPantry=="false") {
+					recipe.update({canMake: false});
+				} else {
+					recipe.getIngredients({
+						where: {inPantry: false}
+					})
+					.then(function(ingredients){
+						console.log("ingredients: ", ingredients);
+						if (ingredients.length==0) {recipe.update({canMake: true})}
+					})
+				}
+			})
+		})
 		res.redirect('/ingredient');
 	});
 });
@@ -142,17 +165,21 @@ router.get('/findRecipe', function (req, res) {
 router.post('/findRecipe', function (req, res) {
 	return Ingredient.find({where: {name: req.body.searchTerm}})
 	.then(function(ingredient){
-		return ingredient.getRecipes({where:{
-			vegan: req.body.vegan,
-			glutenFree: req.body.gluten,
-			vegetarian: req.body.vegetarian,
-			cuisine: req.body.cuisine,
-			type: req.body.type
-	  		}
-		})
+		var searchObject = {
+			cuisine: {$or: {$eq: req.body.cuisine, $eq: ""}},
+			type: {$or: {$eq: req.body.type, $eq: ""}}
+		}
+		searchObject.vegan = ((req.body.vegan == ("0" || " 1")) ?
+			req.body.vegan : {$ne: "3"});
+		searchObject.glutenFree = ((req.body.gluten == ("0" || " 1" )) ?
+			req.body.gluten : {$ne: "3"});
+		searchObject.vegetarian = ((req.body.vegetarian == ("0" || " 1" )) ?
+			req.body.vegetarian : {$ne: "3"});
+		searchObject.canMake = ((req.body.canMake == "1") ? req.body.canMake : {$ne: "3"});
+
+		return ingredient.getRecipes({where:searchObject})
 	})
 	.then (function(recipes){
-		console.log("you are here and recipe is: ", recipes);
 		var hbsObject = {recipes};
 		res.render('findRecipe', hbsObject);
 	})
@@ -207,7 +234,7 @@ router.get('/admin', function (req, res) {
 		res.render('admin', hbsobject);
 	});
 
-router.post('/admin/add', function (req, res) {
+router.post('/admin', function (req, res) {
 	getRecipes(req.body, function(message){
 		var hbsobject = {message};
 		console.log("you are here:", message);
