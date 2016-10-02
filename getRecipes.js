@@ -15,33 +15,29 @@ var unirest = require('unirest');
 // PREPARE OUR TABLES
 // =======================================================================
 var models = require('./models');
+
+
+
+module.exports = function(searchParams, cb)
+{
 /// extract our sequelize connection from the models object, to avoid confusion
 var seqConnection = models.sequelize;
-
-// global variables
-// =======================================================================
+//
+// reset global variables to default values for every search
+// if we don't do this, these variables will be set to the values
+// leftover from the last search
 var recipeSearchResults = [];
 var oneRecipeData = {};
 var recipeID ="";
 var recipeIngredients = [];
 var newIngredients = [];
-var cuisine;
-var type;
-var intolerances;
+var cuisine = "";
+var type = "";
+var intolerances = "";
 
-
-module.exports = function(searchParams, cb)
-{
 //========================================================================
 //          THIS IS WHERE THE ACTION STARTS
 //========================================================================
-//
-// reset global variables to default values for every search
-// if we don't do this, these variables will be set to the values
-// leftover from the last search
-cuisine = "";
-type = "";
-intolerances = "";
 
 // BUILD QUERY STRING for Spoonsacular API using input from admin page
 // Also, save certain search parameters to database so we can save them later with
@@ -89,7 +85,7 @@ console.log("queryURL: ", queryURL);
             recipeSearchResults = result.body.results;
             console.log("recipeSearchResults: ", recipeSearchResults);
             // NOW CALL THE MOTHER OF ALL FUNCTIONS FOR THIS MODULE
-            processAllRecipes(recipeSearchResults);
+            processAllRecipes(recipeSearchResults, cuisine, type, intolerances);
             // then run the call back function with a message of success!
             cb("Recipes found!");
         }; // end of inner else
@@ -113,11 +109,11 @@ console.log("queryURL: ", queryURL);
 //             and stores the information in the database
 //  - OUTPUT:  confirmation that the recipes have been saved to the database
 //
-function processAllRecipes(recipes){
+function processAllRecipes(recipes, cuisine, type, intolerances){
     var j=0;
     function outerloop(){
         if (j < recipes.length){
- //       if (j < 1){
+//        if (j < 2){
             // FOR EACH RECIPE IN recipeResults array, you need to do two searches
             recipeID = recipes[j].id;
 
@@ -137,6 +133,9 @@ function processAllRecipes(recipes){
                     oneRecipeData = {
                         title: result.body.title,
                         image: result.body.image,
+                        cuisine: cuisine,
+                        type: type,
+                        intolerances: intolerances,
                         vegetarian: result.body.vegetarian,
                         vegan: result.body.vegan,
                         glutenFree: result.body.glutenFree,
@@ -271,7 +270,7 @@ function addToTable(ingredients, newRecipe, recipeIngredients){
   var canMakeFlag = true;
   function forloop(){
     if(i<ingredients.length){
- //   if (i<1){
+//    if (i < 5){
         models.Ingredient.findOrCreate({where: {spoonID: ingredients[i].spoonID}, defaults: {name: ingredients[i].name, category: ingredients[i].category}})
         .spread(function(ingr, create){
             i++;
@@ -290,7 +289,7 @@ function addToTable(ingredients, newRecipe, recipeIngredients){
             console.log('Error occurred in addToTable function:', err);
         });
     }
-    else{
+    else {
         createRecipe(newRecipe, recipeIngredients, canMakeFlag);
     }
   }
@@ -309,9 +308,9 @@ function createRecipe(newRecipe, recipeIngredients, canMakeFlag){
     return models.Recipe.findOrCreate({where: {spoonID: newRecipe.spoonID}, defaults:
         {title: newRecipe.title,
         image: newRecipe.image,
-        cuisine: cuisine,
-        type: type,
-        intolerances: intolerances,
+        cuisine: newRecipe.cuisine,
+        type: newRecipe.type,
+        intolerances: newRecipe.intolerances,
         vegetarian: newRecipe.vegetarian,
         vegan: newRecipe.vegan,
         glutenFree: newRecipe.glutenFree,
