@@ -43,10 +43,8 @@ router.get('/home', function (req, res) {
 // find all ingredients
 // and pass to handlebars to process further
 router.get('/ingredient', function (req, res) {
-	console.log('GET REQUEST RECEIVED BY SERVER');
 	Ingredient.findAll()
 	.then (function(ingredient){
-		console.log('INGREDIENT', ingredient);
 		var hbsObject = {ingredient};
 		res.render('ingredient', hbsObject);
 	});
@@ -56,7 +54,6 @@ router.get('/ingredient', function (req, res) {
 // receives new ingredient entered by user
 // and updates database with the new ingredient
 router.post('/ingredient/update', function (req, res) {
-	console.log('ingredient received', req.body);
 	Ingredient.create(
 		{name: req.body.name,
 		category: req.body.category})
@@ -88,7 +85,6 @@ router.put('/ingredient/update/:id', function (req, res) {
 						where: {inPantry: false}
 					})
 					.then(function(ingredients){
-						console.log('ingredients: ', ingredients);
 						if (ingredients.length==0) {recipe.update({canMake: true})}
 					})
 				}
@@ -119,8 +115,8 @@ router.get('/findRecipe', function (req, res) {
 });
 
 router.post('/findRecipe', function (req, res) {
-	return Ingredient.find({where: {name: {$like: '%'+req.body.searchTerm+'%'}}})
-	.then(function(ingredient){
+	Ingredient.findAll({where: {name: {$like: '%'+req.body.searchTerm+'%'}}})
+	.then(function(ingredients){
 		var searchObject = {};
 		if (req.body.type !== 'any') {
 			searchObject.type = {$in: ['', req.body.type]}};
@@ -134,15 +130,45 @@ router.post('/findRecipe', function (req, res) {
 			req.body.vegetarian : {$ne: '3'});
 		searchObject.canMake = ((req.body.canMake == '1') ? req.body.canMake : {$ne: '3'});
 
-		return ingredient.getRecipes({where: searchObject})
-	})
-	.then (function(recipes){
-		var hbsObject = {recipes};
-		res.render('findRecipe', hbsObject);
+//		for each ingredient, we need to find the recipes
+		var i = 0;
+		var recipes = [];
+		var recipeID = '';
+		var savedRecipeIDs = [];
+		var recipeIDs = [];
+		function anotherLoop(){
+			if (i < ingredients.length){
+				ingredients[i].getRecipes({where: searchObject})
+				.then(function(partialList){
+					for (var j=0; j<partialList.length; j++){
+						recipeID = partialList[j].dataValues.id;
+						if (savedRecipeIDs.indexOf(recipeID) < 0) {
+							recipes.push(partialList[j]);
+							savedRecipeIDs.push(recipeID);
+						}
+					}
+					i++;
+					anotherLoop();
+				})
+			} else {
+				var hbsObject = {recipes};
+				res.render('findRecipe', hbsObject);				
+			}
+		}
+		anotherLoop();
+
+		// ingredients.forEach(function(ingredient){
+		// 	ingredient.getRecipes({where: searchObject})
+		// 	.then(function(partialRecipes){
+		// 		recipes = recipes.concat(partialRecipes);
+		// 		console.log('***recipe***');
+		// 	})
+		// })
 	})
 	.catch(function(error) {
 		console.log("error: ", error)
 	})
+	
 });
 
 // GET REQUEST TO URI - /addRecipe
