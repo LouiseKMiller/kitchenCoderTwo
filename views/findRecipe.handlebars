@@ -20,11 +20,11 @@ margin-top: 15px;
 
 label {margin-top: 15px}
 
-#recipeTitle {
+.recipeTitle {
   color: red;
 }
 
-#recipePic {
+.recipePic {
   margin-left: auto;
   margin-right: auto;
   width: 250px;
@@ -120,17 +120,18 @@ label {margin-top: 15px}
       </div>
     </form>
   </div>
-  <div class="container col-md-6">
-  <h2>Results</h2>
 
-
-   {{#each recipes}}
-    <h3>Recipe: </h3>
-    <h4 id="recipeTitle">{{title}}</h4>
-    <img src={{image}} id="recipePic">
-   {{/each}}
-
+  <div class="container col-md-6" id="recipeResultDiv">
+    <h2>Results</h2>
+     {{#each recipes}}
+      <div class="recipeDiv" id="{{id}}">
+          <h3>Recipe: </h3>
+          <h4 class="recipeTitle">{{title}}</h4>
+          <img src={{image}} class="recipePic">
+      </div>
+    {{/each}}
   </div>
+
 </div>
 
 
@@ -213,3 +214,21 @@ label {margin-top: 15px}
     </div>{{!-- .row close --}}
   </div>{{!-- .containe close --}}
  </section>{{!-- #blog close --}}
+
+ {{!  ******************SCRIPT FILE HERE *****************}}
+<script>
+window.onload = function(){
+  document.body.addEventListener('click', function(event) {
+    if (event.target.className === 'recipeDiv') {
+
+      var xhr = new XMLHttpRequest();
+      console.log(this.id);
+      xhr.open('GET', 'recipe');
+      xhr.send(this.id);
+
+    }
+  })
+}
+</script>
+
+

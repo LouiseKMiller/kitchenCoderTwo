@@ -109,8 +109,17 @@ var helpers = {
 		.catch(function(error) {
 			console.log("error: ", error)
 		})
-	}
+	},
 
+	findSpecificRecipe: function(req, res) {
+		// return instance of Ingredient.findAll results
+		return Recipe.find({
+			where: {id: req.params.id}
+		})
+		.catch(function(err) {
+			console.log('Error occurred in helpers.findAllIngredients function:', err);		
+		})
+	},	
 
 }
 

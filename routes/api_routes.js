@@ -102,6 +102,18 @@ router.post('/findRecipe', function (req, res) {
 	helpers.findDatabaseRecipes(req, res);
 });
 
+// GET REQUEST TO URI - /recipe
+// user presented with page showing specific recipe information
+//
+router.get('/recipe/:id', function (req, res) {
+	helpers.findSpecificRecipe(req,res)
+	.then (function(recipe){
+		console.log("result of findSpecificRecipe: ", recipe);
+		var hbsObject = {recipe};
+		res.render('recipe', hbsObject);	
+	})
+});
+//
 // GET REQUEST TO URI - /addRecipe
 // user presented with page where she can
 // query database for matching recipes
