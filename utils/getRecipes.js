@@ -20,7 +20,7 @@ module.exports = function(searchParams, cb)
 
 // PREPARE OUR TABLES
 // =======================================================================
-var models = require('./models');
+var models = require('../models');
 /// extract our sequelize connection from the models object, to avoid confusion
 var seqConnection = models.sequelize;
 //

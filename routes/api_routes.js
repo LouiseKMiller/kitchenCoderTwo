@@ -8,7 +8,8 @@ var express = require('express');
 var router = express.Router();
 var Recipe = require('../models')["Recipe"];
 var Ingredient = require('../models')["Ingredient"];
-var getRecipes = require('../getRecipes');
+var getRecipes = require('../utils/getRecipes');
+var helpers = require('../utils/helpers');
 
 //******************************************************
 //  ROUTE FOR ROOT AND HOME
@@ -42,8 +43,8 @@ router.get('/home', function (req, res) {
 // GET REQUEST TO URI  - /INGREDIENT
 // find all ingredients
 // and pass to handlebars to process further
-router.get('/ingredient', function (req, res) {
-	Ingredient.findAll()
+router.get('/ingredient', function(req, res) {
+	helpers.findAllIngredients(req, res)
 	.then (function(ingredient){
 		var hbsObject = {ingredient};
 		res.render('ingredient', hbsObject);
@@ -53,43 +54,22 @@ router.get('/ingredient', function (req, res) {
 // POST REQUEST TO URI  - /INGREDIENT/UPDATE
 // receives new ingredient entered by user
 // and updates database with the new ingredient
-router.post('/ingredient/update', function (req, res) {
-	Ingredient.create(
-		{name: req.body.name,
-		category: req.body.category})
-		.then (function(){
-			res.redirect('/ingredient');
-		});
+// router.post('/ingredient/update', function(req, res) {
+// 	helpers.createIngredient(req, res)
+// 	});
+router.post('/ingredient/update', function(req, res) {
+	helpers.createIngredient(req, res)
+	.then (function(){
+		res.redirect('/ingredient');
+	});
 });
 
 // PUT REQUEST TO URI  - /INGREDIENT/UPDATE/:id
 // user identifies an ingredient and a change to the inStock status
 // we update the database with that information
-router.put('/ingredient/update/:id', function (req, res) {
-	var condition = 'id = ' + req.params.id;
-	Ingredient.update({inPantry: req.body.inPantry }, {where: {id: req.params.id}})
-	.then (function () {
-		// see if any recipes' canMake status is affected
-		Recipe.findAll({
-		include:[{
-			model: Ingredient,
-			where: {id: req.params.id}
-			}]
-		})
-		.then (function(recipes){
-			recipes.forEach(function(recipe){
-				if (req.body.inPantry=='false') {
-					recipe.update({canMake: false});
-				} else {
-					recipe.getIngredients({
-						where: {inPantry: false}
-					})
-					.then(function(ingredients){
-						if (ingredients.length==0) {recipe.update({canMake: true})}
-					})
-				}
-			})
-		})
+router.put('/ingredient/update/:id', function(req, res) {
+	helpers.updateIngredientPantryStatus(req, res)
+	.then (function(){
 		res.redirect('/ingredient');
 	});
 });
@@ -115,60 +95,11 @@ router.get('/findRecipe', function (req, res) {
 });
 
 router.post('/findRecipe', function (req, res) {
-	Ingredient.findAll({where: {name: {$like: '%'+req.body.searchTerm+'%'}}})
-	.then(function(ingredients){
-		var searchObject = {};
-		if (req.body.type !== 'any') {
-			searchObject.type = {$in: ['', req.body.type]}};
-		if (req.body.cuisine !== 'any') {
-			searchObject.cuisine = {$in: ['', req.body.cuisine]}};
-		searchObject.vegan = ((req.body.vegan == ('0' || '1')) ?
-			req.body.vegan : {$ne: '3'});
-		searchObject.glutenFree = ((req.body.gluten == ('0' || '1' )) ?
-			req.body.gluten : {$ne: '3'});
-		searchObject.vegetarian = ((req.body.vegetarian == ('0' || '1' )) ?
-			req.body.vegetarian : {$ne: '3'});
-		searchObject.canMake = ((req.body.canMake == '1') ? req.body.canMake : {$ne: '3'});
-
-//		for each ingredient, we need to find the recipes
-		var i = 0;
-		var recipes = [];
-		var recipeID = '';
-		var savedRecipeIDs = [];
-		var recipeIDs = [];
-		function anotherLoop(){
-			if (i < ingredients.length){
-				ingredients[i].getRecipes({where: searchObject})
-				.then(function(partialList){
-					for (var j=0; j<partialList.length; j++){
-						recipeID = partialList[j].dataValues.id;
-						if (savedRecipeIDs.indexOf(recipeID) < 0) {
-							recipes.push(partialList[j]);
-							savedRecipeIDs.push(recipeID);
-						}
-					}
-					i++;
-					anotherLoop();
-				})
-			} else {
-				var hbsObject = {recipes};
-				res.render('findRecipe', hbsObject);				
-			}
-		}
-		anotherLoop();
-
-		// ingredients.forEach(function(ingredient){
-		// 	ingredient.getRecipes({where: searchObject})
-		// 	.then(function(partialRecipes){
-		// 		recipes = recipes.concat(partialRecipes);
-		// 		console.log('***recipe***');
-		// 	})
-		// })
-	})
-	.catch(function(error) {
-		console.log("error: ", error)
-	})
-	
+	// ***************** LKMNOTE TO DO ********************
+	// figure out how to get helper function to 
+	// return results array so we can render it
+	// in this router file
+	helpers.findDatabaseRecipes(req, res);
 });
 
 // GET REQUEST TO URI - /addRecipe
@@ -180,26 +111,6 @@ router.get('/addRecipe', function (req, res) {
 	res.render('addRecipe');
 });
 //
-// POST REQUEST TO URI  - /RECIPE/ADD
-// receives new recipe entered by user
-// and updates database with the new recipe
-//  THIS IS WHERE WE WILL NEED TO MAKE THE ASSOCIATION IN THE DATABASE BETWEEN THE RECIPE AND THE INGREDIENTS IT USES
-//
-
-// here is the code that has worked to make that association
-// .then(function(){
-// 	return models.Recipe.create(
-// 		{title: 'Turkey Sandwich',
-// 		 instructions: 'Take out two pieces of Bread. Spread mayo on one slice and mustard on the other. Add a layer of turkey, cheese, tomatoes, and lettuce.',
-// 		 cuisine: 'Miscellaneous'
-// 		})
-// 	.then(function(recipe){
-//     return models.Ingredient.findAll({where: {name: ['Lettuce','Turkey','Tomatoes']}})
-//     	.then(function(ingredients){recipe.addIngredients(ingredients);
-//     	})
-// 	})
-
-// })
 
 //******************************************************
 //  ROUTE FOR ADMINISTRATOR
@@ -234,9 +145,7 @@ router.post('/admin', function (req, res) {
 // add addition limitation that all ingredients must be inStock
 //
 router.get('/contactUs', function (req, res) {
-
 	res.render('contactUs');
-
 });
 
 
@@ -270,3 +179,23 @@ router.get('/contactUs', function (req, res) {
 //});
 
 module.exports = router;
+// POST REQUEST TO URI  - /RECIPE/ADD
+// receives new recipe entered by user
+// and updates database with the new recipe
+//  THIS IS WHERE WE WILL NEED TO MAKE THE ASSOCIATION IN THE DATABASE BETWEEN THE RECIPE AND THE INGREDIENTS IT USES
+//
+
+// here is the code that has worked to make that association
+// .then(function(){
+// 	return models.Recipe.create(
+// 		{title: 'Turkey Sandwich',
+// 		 instructions: 'Take out two pieces of Bread. Spread mayo on one slice and mustard on the other. Add a layer of turkey, cheese, tomatoes, and lettuce.',
+// 		 cuisine: 'Miscellaneous'
+// 		})
+// 	.then(function(recipe){
+//     return models.Ingredient.findAll({where: {name: ['Lettuce','Turkey','Tomatoes']}})
+//     	.then(function(ingredients){recipe.addIngredients(ingredients);
+//     	})
+// 	})
+
+// })
