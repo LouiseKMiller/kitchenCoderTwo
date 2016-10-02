@@ -48,18 +48,18 @@ label {margin-top: 15px}
           <label for="vegan">Vegan?</label><br>
           <input type="radio" name="vegan" value="1">Yes
           <input type="radio" name="vegan" value="0">No
-          <input type="radio" name="vegan" value="x">Don't Care<br>
+          <input type="radio" name="vegan" value="x" selected>Don't Care<br>
 
 
           <label for="gluten">Gluten Free?</label><br>
           <input type="radio" name="gluten" value="1">Yes
           <input type="radio" name="gluten" value="0">No
-          <input type="radio" name="gluten" value="x">Don't Care<br>
+          <input type="radio" name="gluten" value="x" selected>Don't Care<br>
 
           <label for="vegetarian">Vegetarian?</label><br>
           <input type="radio" name="vegetarian" value="1">Yes
           <input type="radio" name="vegetarian" value="0">No
-          <input type="radio" name="vegetarian" value="x">Don't Care<br>
+          <input type="radio" name="vegetarian" value="x" selected>Don't Care<br>
 
           <div class="form-group">
             <label for="cuisine">Type of Cuisine</label><br>
@@ -121,14 +121,12 @@ label {margin-top: 15px}
     </form>
   </div>
   <div class="container col-md-6">
-  <h2>Enter your preferences and submit to find a recipe!</h2>
+  <h2>Results</h2>
 
 
    {{#each recipes}}
     <h3>Recipe: </h3>
     <h4 id="recipeTitle">{{title}}</h4>
-    <h4>Instructions: </h4>
-       {{this.instructions}}<br>
     <img src={{image}} id="recipePic">
    {{/each}}
 

@@ -1,6 +1,6 @@
-// PROJECT 2
+// FINAL PROJECT
 // UT BOOT CAMP
-// THE KITCHEN CODERS
+// THE KITCHEN CODERS PART TWO
 // Here is where you create all the functions that will do the routing for your api requests, and the logic of each route, including CRUD commands for the MySQL database (using Sequelize).
 //
 var path = require('path');
@@ -9,9 +9,6 @@ var router = express.Router();
 var Recipe = require('../models')["Recipe"];
 var Ingredient = require('../models')["Ingredient"];
 var getRecipes = require('../getRecipes');
-
-
-
 
 //******************************************************
 //  ROUTE FOR ROOT AND HOME
@@ -24,17 +21,6 @@ var getRecipes = require('../getRecipes');
 //	  (3) go to the addRecipes page
 //    (4) go to the preferences page
 //
-// POST REQUEST TO URI  - /INGREDIENTS
-// provide ingredients information to display
-// see ingredient.handlebars
-// router.get('/ingredient', function (req, res) {
-// 	Ingredient.findAll()
-// 	.then (function(ingredients){
-// 		var hbsObject = {ingredients};
-// 		res.render('ingredient', hbsObject);
-// 	});
-// });
-// POST REQUEST TO URI  - /INGREDIENTS/ADD
 router.get('/', function (req, res) {
 	res.redirect('/home');
 	});
@@ -53,36 +39,24 @@ router.get('/home', function (req, res) {
 //    (4) make a change to an ingredient already in the database (other than inStock)
 //    (5) delete an ingredient
 //
-// function findAvailRecipes(){
-// 	Ingredient.findAll({where: {inPantry : false}})
-// 	.then (function(ingredients){
-// 		Recipeingredients.findall({
-// 			where:
-// 		})
-// 	})
-
-// }
-
-
-
 // GET REQUEST TO URI  - /INGREDIENT
 // find all ingredients
 // and pass to handlebars to process further
 router.get('/ingredient', function (req, res) {
-	console.log("GET REQUEST RECEIVED BY SERVER");
+	console.log('GET REQUEST RECEIVED BY SERVER');
 	Ingredient.findAll()
 	.then (function(ingredient){
-		console.log("INGREDIENT", ingredient);
+		console.log('INGREDIENT', ingredient);
 		var hbsObject = {ingredient};
 		res.render('ingredient', hbsObject);
 	});
 });
 
-// POST REQUEST TO URI  - /INGREDIENT/ADD
+// POST REQUEST TO URI  - /INGREDIENT/UPDATE
 // receives new ingredient entered by user
 // and updates database with the new ingredient
 router.post('/ingredient/update', function (req, res) {
-	console.log("ingredient received", req.body);
+	console.log('ingredient received', req.body);
 	Ingredient.create(
 		{name: req.body.name,
 		category: req.body.category})
@@ -91,9 +65,9 @@ router.post('/ingredient/update', function (req, res) {
 		});
 });
 
+// PUT REQUEST TO URI  - /INGREDIENT/UPDATE/:id
 // user identifies an ingredient and a change to the inStock status
 // we update the database with that information
-
 router.put('/ingredient/update/:id', function (req, res) {
 	var condition = 'id = ' + req.params.id;
 	Ingredient.update({inPantry: req.body.inPantry }, {where: {id: req.params.id}})
@@ -107,14 +81,14 @@ router.put('/ingredient/update/:id', function (req, res) {
 		})
 		.then (function(recipes){
 			recipes.forEach(function(recipe){
-				if (req.body.inPantry=="false") {
+				if (req.body.inPantry=='false') {
 					recipe.update({canMake: false});
 				} else {
 					recipe.getIngredients({
 						where: {inPantry: false}
 					})
 					.then(function(ingredients){
-						console.log("ingredients: ", ingredients);
+						console.log('ingredients: ', ingredients);
 						if (ingredients.length==0) {recipe.update({canMake: true})}
 					})
 				}
@@ -130,28 +104,10 @@ router.put('/ingredient/update/:id', function (req, res) {
 // ??    POST REQUEST to delete
 // we update the database with that information
 
-
-
-
 //******************************************************
 //  ROUTES FOR RECIPES
 //******************************************************
 //
-// GET REQUEST TO URI - /RECIPE  (*** should change to /RECIPE/RESULTS ??)
-// user has entered filtering information, which is used below
-// to query database for matching recipes
-// add addition limitation that all ingredients must be inStock
-//
-router.post('/findRecipe/find', function (req, res) {
-	console.log(req.body);
-	Recipe.findAll({
-	where: {vegan : req.body.vegan}})
-	.then (function(recipe){
-		var hbsObject = {recipe};
-		res.render('findRecipe', hbsObject);
-	});
-
-});
 
 // GET REQUEST TO URI - /findRecipe
 // user presented with page where she can
@@ -163,19 +119,20 @@ router.get('/findRecipe', function (req, res) {
 });
 
 router.post('/findRecipe', function (req, res) {
-	return Ingredient.find({where: {name: req.body.searchTerm}})
+	return Ingredient.find({where: {name: {$like: '%'+req.body.searchTerm+'%'}}})
 	.then(function(ingredient){
-		var searchObject = {
-			type: {$in: ["", req.body.type]},
-			cuisine: {$in: ["", req.body.cuisine]}
-		};
-		searchObject.vegan = ((req.body.vegan == ("0" || " 1")) ?
-			req.body.vegan : {$ne: "3"});
-		searchObject.glutenFree = ((req.body.gluten == ("0" || " 1" )) ?
-			req.body.gluten : {$ne: "3"});
-		searchObject.vegetarian = ((req.body.vegetarian == ("0" || " 1" )) ?
-			req.body.vegetarian : {$ne: "3"});
-		searchObject.canMake = ((req.body.canMake == "1") ? req.body.canMake : {$ne: "3"});
+		var searchObject = {};
+		if (req.body.type !== 'any') {
+			searchObject.type = {$in: ['', req.body.type]}};
+		if (req.body.cuisine !== 'any') {
+			searchObject.cuisine = {$in: ['', req.body.cuisine]}};
+		searchObject.vegan = ((req.body.vegan == ('0' || '1')) ?
+			req.body.vegan : {$ne: '3'});
+		searchObject.glutenFree = ((req.body.gluten == ('0' || '1' )) ?
+			req.body.gluten : {$ne: '3'});
+		searchObject.vegetarian = ((req.body.vegetarian == ('0' || '1' )) ?
+			req.body.vegetarian : {$ne: '3'});
+		searchObject.canMake = ((req.body.canMake == '1') ? req.body.canMake : {$ne: '3'});
 
 		return ingredient.getRecipes({where: searchObject})
 	})
@@ -237,7 +194,6 @@ router.get('/admin', function (req, res) {
 router.post('/admin', function (req, res) {
 	getRecipes(req.body, function(message){
 		var hbsobject = {message};
-		console.log("you are here:", message);
 		res.render('admin', hbsobject);
 	});
 });
