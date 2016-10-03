@@ -110,7 +110,7 @@ console.log("queryURL: ", queryURL);
         var j=0;
         function outerloop(){
             if (j < recipes.length){
-    //        if (j < 3){
+    //        if (j < 2){
                 // FOR EACH RECIPE IN recipeResults array, you need to do two searches
                 recipeID = recipes[j].id;
 
@@ -197,59 +197,9 @@ console.log("queryURL: ", queryURL);
         });
     }
 
-    //====================================================================
-    // FUNCTION processOneRecipe
-    //
-    //
-    //  - INPUT:   the data for one recipe
-    //  - ACTION:  formats the ingredients information so we can add the recipe-specific
-    //             information to the recipeIngredients table (e.g., amount, units of measurement)
-    //  - OUTPUT:  calls next addtoTable function that saves the ingredients information to the database
-
-    function processOneRecipe(newRecipe){
-        seqConnection.sync()
-        .then(function(){
-
-            // the extendedIngredients data received from spoonacular is an array of ingredients
-            // each element of the array is an object that includes the following:
-            // id - the spoonacular unique identifies for the ingredients
-            // aisle (which we are using for "category"
-            // amount - amount of ingredient needed for the particular recipe
-            // unit - unit of measurement that goes with the amount
-            //
-            // we need to separate the ingredient and category information
-            // from the recipe-specific information (i.e., amount and unit)
-            // the latter information goes into the recipeIngredient through table
-            var cleanCategory = "";
-            var recipeIngredient = {};
-            var recipeIngredients = [];
-
-            for (var i=0; i<newRecipe.extendedIngredients.length; i++) {
-
-
-                // our first shot at cleaning up the category value for each ingredient
-                // must replace special characters because we use this later as a class name
-                // in ingredient.handlebars
-                cleanCategory = newRecipe.extendedIngredients[i].aisle || "misc";
-                cleanCategory = cleanCategory.replace(/\//, "or").replace(/\?/, "misc");
-
-                recipeIngredient = {
-                    name: newRecipe.extendedIngredients[i].name,
-                    spoonID: newRecipe.extendedIngredients[i].id,
-                    category: cleanCategory,
-                    amount: newRecipe.extendedIngredients[i].amount,
-                    unit: newRecipe.extendedIngredients[i].unit
-                };
-                recipeIngredients.push(recipeIngredient);
-            }
-            addToTable(newRecipe, recipeIngredients);
-        })
-    }
-
-
 
     //========================================================================
-    // FUNCTION addToTable Function
+    // FUNCTION processOneRecipe Function
     //
     //  - INPUT:   the data for one recipe
     //  - ACTION:  formats the ingredients information so we can add the recipe-specific
@@ -261,38 +211,47 @@ console.log("queryURL: ", queryURL);
     // MUST LET EACH findOrCreate COMPLETE BEFORE INITIATING THE NEXT ONE FOR
     // THE NEXT INGREDIENT.  OTHERWISE, YOU MAY NOT FIND A PRIOR INGREDIENT
     // THAT IS STILL IN PROCESS.
-    function addToTable(newRecipe, ingredients){
+    function processOneRecipe(newRecipe){
+        seqConnection.sync();
 
-      var i = 0;
-      // if we already have all the ingredients and they are inPantry, then recipe's
-      // canMakeFlag should be set to true.
-      var canMakeFlag = true;
-      function forloop(){
-        if(i<ingredients.length){
-    //    if (i < 5){
-            models.Ingredient.findOrCreate({where: {spoonID: ingredients[i].spoonID}, defaults: {name: ingredients[i].name, category: ingredients[i].category}})
-            .spread(function(ingr, create){
-                i++;
-                // when we add a recipe, we take this opportunity to see if we can make the recipe
-                // with the ingredients we currently have in our kitchen
-                // If we had to add any ingredients, we mark canMake = false
-                // if we didn't have to add any ingredients, we do a further check to see if all
-                // ingredients are in pantry.  If any inPantry is false for any, then canMake = false
-                if (create) {canMakeFlag = false;}
-                else {
-                    if (!ingr.dataValues.inPantry) {canMakeFlag = false};
-                }
-                forloop();
-            })
-            .catch(function(err) {
-                console.log('Error occurred in addToTable function:', err);
-            });
+        for (var i=0; i<newRecipe.extendedIngredients.length; i++) {
+            // our first shot at cleaning up the category value for each ingredient
+            // must replace special characters because we use this later as a class name
+            // in ingredient.handlebars
+            newRecipe.extendedIngredients[i].aisle = newRecipe.extendedIngredients[i].aisle || "misc";
+            newRecipe.extendedIngredients[i].aisle = newRecipe.extendedIngredients[i].aisle.replace(/\//, "or").replace(/\?/, "misc");
+            };
+
+        var i = 0;
+        // if we already have all the ingredients and they are inPantry, then recipe's
+        // canMakeFlag should be set to true.
+        var canMakeFlag = true;
+        function forloop(){
+            if (i < newRecipe.extendedIngredients.length){
+        //    if (i < 5){
+                models.Ingredient.findOrCreate({where: {spoonID: newRecipe.extendedIngredients[i].id}, defaults: {name: newRecipe.extendedIngredients[i].name, category: newRecipe.extendedIngredients[i].category}})
+                .spread(function(ingr, create){
+                    i++;
+                    // when we add a recipe, we take this opportunity to see if we can make the recipe
+                    // with the ingredients we currently have in our kitchen
+                    // If we had to add any ingredients, we mark canMake = false
+                    // if we didn't have to add any ingredients, we do a further check to see if all
+                    // ingredients are in pantry.  If any inPantry is false for any, then canMake = false
+                    if (create) {canMakeFlag = false;}
+                    else {
+                        if (!ingr.dataValues.inPantry) {canMakeFlag = false};
+                    }
+                    forloop();
+                })
+                .catch(function(err) {
+                    console.log('Error occurred in processOneRecipe function:', err);
+                });
+            }
+            else {
+                createRecipe(newRecipe, canMakeFlag);
+            }
         }
-        else {
-            createRecipe(newRecipe, ingredients, canMakeFlag);
-        }
-      }
-      forloop();
+        forloop();
     }
 
     //========================================================================
@@ -303,7 +262,7 @@ console.log("queryURL: ", queryURL);
     //             and store recipe-specific information to recipeIngredient through table
     //  - OUTPUT:  the end
 
-    function createRecipe(newRecipe, recipeIngredients, canMakeFlag){
+    function createRecipe(newRecipe, canMakeFlag){
         return models.Recipe.findOrCreate({where: {spoonID: newRecipe.spoonID}, defaults:
             {title: newRecipe.title,
             image: newRecipe.image,
@@ -325,19 +284,38 @@ console.log("queryURL: ", queryURL);
         // recipeIngredients table
        .spread(function(recipe, created){
             if (created) {
-                var ingredientIDs =[];
-                var ingredientAmounts = [];
-                for (var x=0; x<recipeIngredients.length; x++){
-                    ingredientIDs.push(recipeIngredients[x].spoonID);
-                    var ingredientAmount = {amount: recipeIngredients[x].amount, unit: recipeIngredients[x].unit};
-                    ingredientAmounts.push(ingredientAmount);
-                }
+
+                console.log("recipe title", newRecipe.title);
+                console.log("extendedIngredients.length", newRecipe.extendedIngredients.length);
+
+                // create an array of ingredient spoonIDs so we can finaAll mathcing
+                // ingredient instances in the database
+                var ingredientIDs = newRecipe.extendedIngredients.map(function(eachIngredient){
+                    return eachIngredient.id;
+                });
+                console.log("typeOf ingredientIDs: ", ingredientIDs);
+                // then find all matching ingredients in the database
                 return models.Ingredient.findAll({where: {spoonID: ingredientIDs}})
 
+                    // then take all ingredients and process each one individually
                     .then(function(ingredients){
-                        for (var i=0; i<ingredients.length; i++) {
-                            {recipe.addIngredient(ingredients[i],ingredientAmounts[i])};
-                        }
+                        console.log("******returned ingredients****", ingredients);
+                        ingredients.forEach(function(ingredient){
+                            console.log("****in ingredient loop with ingredient: ", ingredient);
+                            var index = 0;
+                            // find the ingredient in the newRecipe ingredients array that matches this instance.  have to do this to keep the proper association between the ingredient and its respective amount/units
+                            for (var i=0; i<newRecipe.extendedIngredients.length; i++) {
+                                if (newRecipe.extendedIngredients[i].id == ingredient.spoonID) {index = i};
+                            }
+
+                            // then associate that ingredient with the recipe
+                            // along with the additional attributes of amount and units
+                            recipe.addIngredient(
+                                ingredient,
+                                {amount: newRecipe.extendedIngredients[index].amount,
+                                 unit: newRecipe.extendedIngredients[index].unit}
+                            );
+                        });
                     });
             }
        })
@@ -349,4 +327,5 @@ console.log("queryURL: ", queryURL);
 
 
 } //end of getRecipes function
+
 
