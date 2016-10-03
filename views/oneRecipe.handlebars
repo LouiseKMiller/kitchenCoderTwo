@@ -13,16 +13,6 @@ button {
 margin: 10px;
 margin-top: 15px;
 }
-#recipeForm {
-  text-align: center;
-  margin-top: 5px;
-}
-
-label {margin-top: 15px}
-
-.recipeTitle {
-  color: red;
-}
 
 .recipePic {
   margin-left: auto;
@@ -39,17 +29,17 @@ label {margin-top: 15px}
     <div class="row"
       <div class="col-md-12">
         <div class="block">
-            <h1 class="heading"><span> {{recipe.title}} </span>
-            </h1>
+          <h1 class="heading"><span> {{recipe.title}} </span></h1>
 
-            <img class="recipePic" src={{recipe.image}}>
-            <p>{{recipe.instructions}}</p>
-            <ul>
-           {{#each ingredients}}
-                <li>{{this.name}}{{this.Recipeingredients.amount}}{{this.Recipeingredients.unit}}</li>
+          <img class="recipePic" src={{recipe.image}}>
+          <p>{{recipe.instructions}}</p>
+          <ul>
+          {{#each ingredients}}
+            <li>
+              {{this.name}}{{this.Recipeingredients.amount}}{{this.Recipeingredients.unit}}
+            </li>
           {{/each}}
-            </ul>
-
+          </ul>
         </div>
       </div>
     </div>

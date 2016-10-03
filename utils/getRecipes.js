@@ -262,6 +262,7 @@ console.log("queryURL: ", queryURL);
     // THE NEXT INGREDIENT.  OTHERWISE, YOU MAY NOT FIND A PRIOR INGREDIENT
     // THAT IS STILL IN PROCESS.
     function addToTable(newRecipe, ingredients){
+
       var i = 0;
       // if we already have all the ingredients and they are inPantry, then recipe's
       // canMakeFlag should be set to true.
