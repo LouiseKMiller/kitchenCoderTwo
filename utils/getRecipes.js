@@ -229,7 +229,7 @@ console.log("queryURL: ", queryURL);
         function forloop(){
             if (i < newRecipe.extendedIngredients.length){
         //    if (i < 5){
-                models.Ingredient.findOrCreate({where: {spoonID: newRecipe.extendedIngredients[i].id}, defaults: {name: newRecipe.extendedIngredients[i].name, category: newRecipe.extendedIngredients[i].category}})
+                models.Ingredient.findOrCreate({where: {spoonID: newRecipe.extendedIngredients[i].id}, defaults: {name: newRecipe.extendedIngredients[i].name, category: newRecipe.extendedIngredients[i].aisle}})
                 .spread(function(ingr, create){
                     i++;
                     // when we add a recipe, we take this opportunity to see if we can make the recipe
