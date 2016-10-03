@@ -43,7 +43,6 @@ var intolerances = "";
 // the other recipe information in the database.
 var queryURL = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search?limitLicense=false&number=10&offset=0";
 
-console.log("searchParams: ", searchParams);
 if (searchParams.searchTerm!=="") {queryURL += ("&query=" + searchParams.searchTerm.replace(" ", "+").replace(",", "%2C"))};
 if (searchParams.cuisine!=="any") {
     queryURL += ("&cuisine=" + searchParams.cuisine);
@@ -65,7 +64,6 @@ if (searchParams.intolerances!=="none") {
             searchParams.intolerances :
             searchParams.intolerances.join(", ").replace("+", " ");
 };
-console.log("queryURL: ", queryURL);
 
 // SEARCH FOR 10 RECIPES -
  unirest.get(queryURL)
@@ -82,7 +80,6 @@ console.log("queryURL: ", queryURL);
         } else {
             // Results found.  STORE RESULTS IN recipeResults array
             recipeSearchResults = result.body.results;
-            console.log("recipeSearchResults: ", recipeSearchResults);
             // NOW CALL THE MOTHER OF ALL FUNCTIONS FOR THIS MODULE
             processAllRecipes(recipeSearchResults, cuisine, type, intolerances);
             // then run the call back function with a message of success!
@@ -202,15 +199,13 @@ console.log("queryURL: ", queryURL);
     // FUNCTION processOneRecipe Function
     //
     //  - INPUT:   the data for one recipe
-    //  - ACTION:  formats the ingredients information so we can add the recipe-specific
-    //             information to the recipeIngredients table (e.g., amount, units of measurement)
-    //  - OUTPUT:  calls next addtoTable function that saves the ingredients information to the database
-
+    //  - ACTION:  preprocesses CATEGORY information (taken from spoonacular 'aisle' field
+    //             then saves ingredient information to database if it isn't already there
+    //  - OUTPUT:  calls createRecipe function that saves the recipe information to the database
     //
-    // ON A PER RECIPE BASIS, ADD INGREDIENTS TO THE DATABASE IF THEY ARE NEW
     // MUST LET EACH findOrCreate COMPLETE BEFORE INITIATING THE NEXT ONE FOR
     // THE NEXT INGREDIENT.  OTHERWISE, YOU MAY NOT FIND A PRIOR INGREDIENT
-    // THAT IS STILL IN PROCESS.
+    // THAT IS STILL IN PROCESS.  SO WE USE A RECURSIVE FUNCTION
     function processOneRecipe(newRecipe){
         seqConnection.sync();
 
@@ -232,7 +227,7 @@ console.log("queryURL: ", queryURL);
                 models.Ingredient.findOrCreate({where: {spoonID: newRecipe.extendedIngredients[i].id}, defaults: {name: newRecipe.extendedIngredients[i].name, category: newRecipe.extendedIngredients[i].aisle}})
                 .spread(function(ingr, create){
                     i++;
-                    // when we add a recipe, we take this opportunity to see if we can make the recipe
+                    // when we add an ingredient, we take this opportunity to see if we can make the current recipe we are saving
                     // with the ingredients we currently have in our kitchen
                     // If we had to add any ingredients, we mark canMake = false
                     // if we didn't have to add any ingredients, we do a further check to see if all
@@ -257,9 +252,9 @@ console.log("queryURL: ", queryURL);
     //========================================================================
     // FUNCTION createRecipe
     //
-    //  - INPUT:   the data for one recipe, separated Ingredient information
-    //  - ACTION:  store recipe information to recipe table if new
-    //             and store recipe-specific information to recipeIngredient through table
+    //  - INPUT:   the data for one recipe, canMakeFlag
+    //  - ACTION:  store recipe information to recipe table if new, associate the ingredients,
+    //             and store additional recipe-specific information to recipeIngredient through table
     //  - OUTPUT:  the end
 
     function createRecipe(newRecipe, canMakeFlag){
@@ -285,23 +280,17 @@ console.log("queryURL: ", queryURL);
        .spread(function(recipe, created){
             if (created) {
 
-                console.log("recipe title", newRecipe.title);
-                console.log("extendedIngredients.length", newRecipe.extendedIngredients.length);
-
                 // create an array of ingredient spoonIDs so we can finaAll mathcing
                 // ingredient instances in the database
                 var ingredientIDs = newRecipe.extendedIngredients.map(function(eachIngredient){
                     return eachIngredient.id;
                 });
-                console.log("typeOf ingredientIDs: ", ingredientIDs);
                 // then find all matching ingredients in the database
                 return models.Ingredient.findAll({where: {spoonID: ingredientIDs}})
 
                     // then take all ingredients and process each one individually
                     .then(function(ingredients){
-                        console.log("******returned ingredients****", ingredients);
                         ingredients.forEach(function(ingredient){
-                            console.log("****in ingredient loop with ingredient: ", ingredient);
                             var index = 0;
                             // find the ingredient in the newRecipe ingredients array that matches this instance.  have to do this to keep the proper association between the ingredient and its respective amount/units
                             for (var i=0; i<newRecipe.extendedIngredients.length; i++) {

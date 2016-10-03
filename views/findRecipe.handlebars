@@ -34,188 +34,129 @@ label {margin-top: 15px}
 
 </style>
 
-<div class="row">
-  <div class="container col-md-6">
-    <div class="containerTitle">
-      <h2>Find a Recipe!</h2>
+<section id="form">
+
+  <div class="row">
+    <div class="container col-md-12">
+      <div class="containerTitle">
+        <h2>Find a Recipe!</h2>
+      </div>
+
+      <form class="create-update-form" id="recipeForm" action="findRecipe" method="POST">
+        <div>
+          <h4 id="question1"> Would you like anything particular in your meal?</h4><br>
+          <input type="text" id="searchIngredient" name="searchTerm"><br>
+
+            <label for="vegan">Vegan?</label><br>
+            <input type="radio" name="vegan" value="1">Yes
+            <input type="radio" name="vegan" value="0">No
+            <input type="radio" name="vegan" value="x" selected>Don't Care<br>
+
+
+            <label for="gluten">Gluten Free?</label><br>
+            <input type="radio" name="gluten" value="1">Yes
+            <input type="radio" name="gluten" value="0">No
+            <input type="radio" name="gluten" value="x" selected>Don't Care<br>
+
+            <label for="vegetarian">Vegetarian?</label><br>
+            <input type="radio" name="vegetarian" value="1">Yes
+            <input type="radio" name="vegetarian" value="0">No
+            <input type="radio" name="vegetarian" value="x" selected>Don't Care<br>
+
+            <div class="form-group">
+              <label for="cuisine">Type of Cuisine</label><br>
+              <select class="form-control" name="cuisine">
+                <option value="any" selected>Any</option>
+                <option value="African">African</option>
+                <option value="American">American</option>
+                <option value="British">British</option>
+                <option value="Cajun">Cajun</option>
+                <option value="Caribbean">Caribbean</option>
+                <option value="Chinese">Chinese</option>
+                <option value="Eastern+European">Eastern European</option>
+                <option value="German">German</option>
+                <option value="Greek">Greek</option>
+                <option value="Indian">Indian</option>
+                <option value="Irish">Irish</option>
+                <option value="Italian">Italian</option>
+                <option value="French">French</option>
+                <option value="Japanese">Japanese</option>
+                <option value="Jewish">Jewish</option>
+                <option value="Korean">Korean</option>
+                <option value="Latin+American">Latin American</option>
+                <option value="Mexican">Mexican</option>
+                <option value="Middle+Eastern">Middle Eastern</option>
+                <option value="Southern">Southern</option>
+                <option value="Spanish">Spanish</option>
+                <option value="Thai">Thai</option>
+                <option value="Vietnamese">Vietnamese</option>
+                <option value="Nordic">Nordic</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="type">Type of Meal</label><br>
+              <select class="form-control" name="type">
+                <option value="any">Any</option>
+                <option value="appetizer">Appetizer</option>
+                <option value="beverage">Beverage</option>
+                <option value="bread">Bread</option>
+                <option value="breakfast">Breakfast</option>
+                <option value="dessert">Dessert</option>
+                <option value="drink">Drink</option>
+                <option value="main+course">Main Course</option>
+                <option value="salad">Salad</option>
+                <option value="sauce">Sauce</option>
+                <option value="side+dish">Side Dish</option>
+                <option value="soup">Soup</option>
+              </select>
+            </div>
+
+            <label for="canMake">Limit to Items You Have In Your Pantry?</label><br>
+            <input type="radio" name="canMake" value="1">Yes
+            <input type="radio" name="canMake" value="0">No<br>
+
+
+
+          <button type="submit" value="Submit" id="findRecipe">Submit</button>
+        </div>
+      </form>
     </div>
-
-    <form class="create-update-form" id="recipeForm" action="findRecipe" method="POST">
-      <div>
-        <h4 id="question1"> Would you like anything particular in your meal?</h4><br>
-        <input type="text" id="searchIngredient" name="searchTerm"><br>
-
-          <label for="vegan">Vegan?</label><br>
-          <input type="radio" name="vegan" value="1">Yes
-          <input type="radio" name="vegan" value="0">No
-          <input type="radio" name="vegan" value="x" selected>Don't Care<br>
-
-
-          <label for="gluten">Gluten Free?</label><br>
-          <input type="radio" name="gluten" value="1">Yes
-          <input type="radio" name="gluten" value="0">No
-          <input type="radio" name="gluten" value="x" selected>Don't Care<br>
-
-          <label for="vegetarian">Vegetarian?</label><br>
-          <input type="radio" name="vegetarian" value="1">Yes
-          <input type="radio" name="vegetarian" value="0">No
-          <input type="radio" name="vegetarian" value="x" selected>Don't Care<br>
-
-          <div class="form-group">
-            <label for="cuisine">Type of Cuisine</label><br>
-            <select class="form-control" name="cuisine">
-              <option value="any" selected>Any</option>
-              <option value="African">African</option>
-              <option value="American">American</option>
-              <option value="British">British</option>
-              <option value="Cajun">Cajun</option>
-              <option value="Caribbean">Caribbean</option>
-              <option value="Chinese">Chinese</option>
-              <option value="Eastern+European">Eastern European</option>
-              <option value="German">German</option>
-              <option value="Greek">Greek</option>
-              <option value="Indian">Indian</option>
-              <option value="Irish">Irish</option>
-              <option value="Italian">Italian</option>
-              <option value="French">French</option>
-              <option value="Japanese">Japanese</option>
-              <option value="Jewish">Jewish</option>
-              <option value="Korean">Korean</option>
-              <option value="Latin+American">Latin American</option>
-              <option value="Mexican">Mexican</option>
-              <option value="Middle+Eastern">Middle Eastern</option>
-              <option value="Southern">Southern</option>
-              <option value="Spanish">Spanish</option>
-              <option value="Thai">Thai</option>
-              <option value="Vietnamese">Vietnamese</option>
-              <option value="Nordic">Nordic</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="type">Type of Meal</label><br>
-            <select class="form-control" name="type">
-              <option value="any">Any</option>
-              <option value="appetizer">Appetizer</option>
-              <option value="beverage">Beverage</option>
-              <option value="bread">Bread</option>
-              <option value="breakfast">Breakfast</option>
-              <option value="dessert">Dessert</option>
-              <option value="drink">Drink</option>
-              <option value="main+course">Main Course</option>
-              <option value="salad">Salad</option>
-              <option value="sauce">Sauce</option>
-              <option value="side+dish">Side Dish</option>
-              <option value="soup">Soup</option>
-            </select>
-          </div>
-
-          <label for="canMake">Limit to Items You Have In Your Pantry?</label><br>
-          <input type="radio" name="canMake" value="1">Yes
-          <input type="radio" name="canMake" value="0">No<br>
-
-
-
-        <button type="submit" value="Submit" id="findRecipe">Submit</button>
-      </div>
-    </form>
-  </div>
-
-  <div class="container col-md-6" id="recipeResultDiv">
-    <h2>Results</h2>
-     {{#each recipes}}
-      <div class="recipeDiv" id="{{this.id}}" data-recipeID="{{this.id}}">
-          <h3>Recipe: </h3>
-          <h4 class="recipeTitle">{{this.title}}</h4>
-          <a href="oneRecipe/{{this.id}}">
-            <img class = "recipePic" src={{this.image}}>
-          </a>
-      </div>
-    {{/each}}
-  </div>
-
-</div>
-
-
-
+</section>
 
 {{!--blog start============================ --}}
- <section id="blog">
-  <div class="container">
-   <div class="row">
-    <div class="col-md-12">
-     <div class="block">
-      <h1 class="heading"><span>Find Your Recipes</span></h1>
+  <section id="blog">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="block">
+            <h1 class="heading"><span>Search Results</span></h1>
 
+            <ul>
+              {{#each recipes}}
+                <li class="wow fadeInLeft" data-wow-duration="300ms" data-wow-delay="300ms">
+                  <a href="oneRecipe/{{this.id}}">
+                    <div class="blog-img">
+                     <img class="recipePic" src="{{this.image}}" alt="recipe-img">
+                    </div>
+                    <div class="content-right">
+                    <h3>{{this.title}}</h3>
+                    {{#if this.canMake}}
+                      <p>All ingredients in stock</p>
+                    {{else}}
+                      <p>Some ingredients not in stock</p>
+                    {{/if}}
+                    </div>
+                  </a>
+                </li>
+              {{/each}}
+            </ul>
 
-
-       <ul>
-        <li class="wow fadeInLeft" data-wow-duration="300ms" data-wow-delay="300ms">
-          <div class="blog-img">
-           <img src="images/blog/blog-img-1.jpg" alt="blog-img">
           </div>
-          <div class="content-right">
-           <h3>Chicken Pot Pie</h3>
-           <p>Prepared in true New England fash-ion. </p>
-          </div>
-        </li>
-        <li class="wow fadeInLeft" data-wow-duration="300ms" data-wow-delay="400ms">
-         <div class="blog-img">
-          <img src="images/blog/blog-img-2.jpg" alt="blog-img">
-         </div>
-         <div class="content-right">
-          <h3>Strawberry Waffles</h3>
-          <p>What a great treat for breakfast...</p>
-         </div>
-        </li>
-
-        <li class="wow fadeInLeft" data-wow-duration="300ms" data-wow-delay="500ms">
-         <div class="content-left">
-          <h3>Sirloins in Brown Sauce</h3>
-          <p>Tender strips of sirloin grilled to perfection...</p>
-         </div>
-         <div class="blog-img-2">
-          <img src="images/blog/blog-img-3.jpg" alt="blog-img">
-         </div>
-        </li>
-
-        <li class="wow fadeInLeft" data-wow-duration="300ms" data-wow-delay="600ms">
-         <div class="content-left">
-          <h3>Skewers and Sausages</h3>
-          <p>Appetizers for a party...</p>
-         </div>
-         <div class="blog-img-2">
-          <img src="images/blog/blog-img-4.jpg" alt="blog-img">
-         </div>
-        </li>
-
-        <li class="wow fadeInLeft" data-wow-duration="300ms" data-wow-delay="700ms">
-         <div class="blog-img">
-          <img src="images/blog/blog-img-5.jpg" alt="blog-img">
-         </div>
-         <div class="content-right">
-          <h3>Strawberry Pancakes</h3>
-          <p>A favorite for breakfast...</p>
-         </div>
-        </li>
-
-        <li class="wow fadeInUp" data-wow-duration="300ms" data-wow-delay="800ms">
-         <div class="blog-img">
-          <img src="images/blog/blog-img-6.jpg" alt="blog-img">
-         </div>
-         <div class="content-right">
-          <h3>Fresh Green Salad</h3>
-          <p>Refreshing for summer...</p>
-         </div>
-        </li>
-       </ul>
-
-       <a class="btn btn-default btn-more-info wow bounceIn" data-wow-duration="500ms" data-wow-delay="1200ms" href="#" role="button">More Info</a>
-      </div>
-     </div>{{!-- .col-md-12 close --}}
-    </div>{{!-- .row close --}}
-  </div>{{!-- .containe close --}}
- </section>{{!-- #blog close --}}
+        </div>{{!-- .col-md-12 close --}}
+      </div>{{!-- .row close --}}
+    </div>{{!-- .containe close --}}
+  </section>{{!-- #blog close --}}
 
 
 
