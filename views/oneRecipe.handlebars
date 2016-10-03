@@ -1,0 +1,58 @@
+<style>
+h2 {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 30px;
+  color: green;
+}
+h4 {
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
+button {
+margin: 10px;
+margin-top: 15px;
+}
+#recipeForm {
+  text-align: center;
+  margin-top: 5px;
+}
+
+label {margin-top: 15px}
+
+.recipeTitle {
+  color: red;
+}
+
+.recipePic {
+  margin-left: auto;
+  margin-right: auto;
+  width: 250px;
+
+  height: 250px;
+}
+
+</style>
+
+  {{! ************* MAIN HEADING}}
+  <div class="container">
+    <div class="row"
+      <div class="col-md-12">
+        <div class="block">
+            <h1 class="heading"><span> {{recipe.title}} </span>
+            </h1>
+
+            <img class="recipePic" src={{recipe.image}}>
+            <p>{{recipe.instructions}}</p>
+            <ul>
+           {{#each ingredients}}
+                <li>{{this.name}}{{this.Recipeingredients.amount}}{{this.Recipeingredients.unit}}</li>
+          {{/each}}
+            </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+

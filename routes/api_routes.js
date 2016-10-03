@@ -105,16 +105,8 @@ router.post('/findRecipe', function (req, res) {
 // GET REQUEST TO URI - /recipe
 // user presented with page showing specific recipe information
 //
-router.get('/recipe/:id', function(req, res){
-	var chosen = req.params.id;
-	console.log("at start of router.get, id= ", chosen);
-	helpers.findSpecificRecipe(chosen)
-	.then (function(recipe){
-		console.log("result of findSpecificRecipe: ", recipe);
-		var hbsObject = {recipe};
-		console.log("you are now about to get redirected");
-		res.render('recipe', hbsObject);
-	})
+router.get('/oneRecipe/:id', function(req, res){
+	helpers.findSpecificRecipe(req.params.id, res);
 });
 //
 // GET REQUEST TO URI - /addRecipe

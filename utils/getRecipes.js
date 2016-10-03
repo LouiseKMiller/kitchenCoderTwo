@@ -55,7 +55,7 @@ if (searchParams.type!=="any") {
     type = searchParams.type;
     };
 if (searchParams.excludeIngredients!=="") {queryURL += ("&excludeIngredients=" + searchParams.excludeIngredients.trim().replace(",", "%2C").replace(" ", "+"))};
-// searchParams.intolerances is string if user picks just one, 
+// searchParams.intolerances is string if user picks just one,
 // and is an array if user picks more than one from pull down list of options
 if (searchParams.intolerances!=="none") {
     queryURL += ("&intolerances=" + ((typeof searchParams.intolerances === 'string') ?
@@ -163,8 +163,8 @@ console.log("queryURL: ", queryURL);
 
     //====================================================================
     // FUNCTION getInstructions
-    // 
-    //  
+    //
+    //
     //  - INPUT: recipeID - the spoonID from spoonacular for the recipe
     //  - ACTION:  grabs the list of ingredients from spoonacular API
     //             for the recipe with the specified spoonID (recipeID)
@@ -183,7 +183,7 @@ console.log("queryURL: ", queryURL);
                 console.log("error in unirest call in getInstructions function");
             } else {
             // unirest API call successful
-            // if instructions array not empty, concatenate 
+            // if instructions array not empty, concatenate
             // the step value in each element of the steps array
                 if (result.body.length >= 1) {
                     var steps = result.body[0].steps;
@@ -199,8 +199,8 @@ console.log("queryURL: ", queryURL);
 
     //====================================================================
     // FUNCTION processOneRecipe
-    // 
-    //  
+    //
+    //
     //  - INPUT:   the data for one recipe
     //  - ACTION:  formats the ingredients information so we can add the recipe-specific
     //             information to the recipeIngredients table (e.g., amount, units of measurement)
@@ -250,7 +250,7 @@ console.log("queryURL: ", queryURL);
 
     //========================================================================
     // FUNCTION addToTable Function
-    //  
+    //
     //  - INPUT:   the data for one recipe
     //  - ACTION:  formats the ingredients information so we can add the recipe-specific
     //             information to the recipeIngredients table (e.g., amount, units of measurement)
@@ -296,7 +296,7 @@ console.log("queryURL: ", queryURL);
 
     //========================================================================
     // FUNCTION createRecipe
-    //  
+    //
     //  - INPUT:   the data for one recipe, separated Ingredient information
     //  - ACTION:  store recipe information to recipe table if new
     //             and store recipe-specific information to recipeIngredient through table

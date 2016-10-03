@@ -127,7 +127,9 @@ label {margin-top: 15px}
       <div class="recipeDiv" id="{{this.id}}" data-recipeID="{{this.id}}">
           <h3>Recipe: </h3>
           <h4 class="recipeTitle">{{this.title}}</h4>
-          <img src={{this.image}}>
+          <a href="oneRecipe/{{this.id}}">
+            <img src={{this.image}}>
+          </a>
       </div>
     {{/each}}
   </div>
@@ -215,25 +217,6 @@ label {margin-top: 15px}
   </div>{{!-- .containe close --}}
  </section>{{!-- #blog close --}}
 
- {{!  ******************SCRIPT FILE HERE *****************}}
-
-  <script type="text/javascript">
-     $('#recipeResultDiv').on('click', '.recipeDiv', function() {
-
-        var recipeID = $(this).attr('data-recipeID');
-        console.log("recipeID", recipeID);
-        queryURL = "recipe/" + recipeID;
-        $.ajax({
-          url: queryURL,
-          method: 'GET'
-          })
-        .done(function(response) {
-          console.log('done')
-        });
-      })
-
-
-</script>
 
 
 

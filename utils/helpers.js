@@ -54,7 +54,7 @@ var helpers = {
 			})
 		})
 		.catch(function(err) {
-			console.log('Error occurred in helpers.updateIngredient function:', err);
+			console.log('Error occurred in helpers.updateIngredientPantryStatus function:', err);
 		})
 	},
 //=====================================================================
@@ -111,24 +111,26 @@ var helpers = {
 		})
 	},
 
-	findSpecificRecipe: function(idNum) {
+	findSpecificRecipe: function(idNum, res) {
+		var savedRecipe = {};
 		// return instance of Ingredient.findAll results
 		return Recipe.find({
 			where: {id: idNum}
 		})
-		.catch(function(err) {
-			console.log('Error occurred in helpers.findAllIngredients function:', err);
+		.then(function(recipe){
+			savedRecipe = recipe;
+			recipe.getIngredients()
+			.then(function(ingredients){
+				var hbsObject = {recipe: savedRecipe, ingredients: ingredients};
+				res.render('oneRecipe', hbsObject);
+			})
+			.catch(function(err) {
+				console.log('Error occurred in helpers.findSpecificRecipe function:', err);
+			})
 		})
 	}
 
 }
-
-
-
-
-
-
-
 
 // We export the helpers function
 module.exports = helpers;
