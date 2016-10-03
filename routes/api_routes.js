@@ -96,7 +96,7 @@ router.get('/findRecipe', function (req, res) {
 
 router.post('/findRecipe', function (req, res) {
 	// ***************** LKMNOTE TO DO ********************
-	// figure out how to get helper function to 
+	// figure out how to get helper function to
 	// return results array so we can render it
 	// in this router file
 	helpers.findDatabaseRecipes(req, res);
@@ -105,12 +105,15 @@ router.post('/findRecipe', function (req, res) {
 // GET REQUEST TO URI - /recipe
 // user presented with page showing specific recipe information
 //
-router.get('/recipe/:id', function (req, res) {
-	helpers.findSpecificRecipe(req,res)
+router.get('/recipe/:id', function(req, res){
+	var chosen = req.params.id;
+	console.log("at start of router.get, id= ", chosen);
+	helpers.findSpecificRecipe(chosen)
 	.then (function(recipe){
 		console.log("result of findSpecificRecipe: ", recipe);
 		var hbsObject = {recipe};
-		res.render('recipe', hbsObject);	
+		console.log("you are now about to get redirected");
+		res.render('recipe', hbsObject);
 	})
 });
 //

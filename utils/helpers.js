@@ -12,9 +12,9 @@ var helpers = {
 		// return instance of Ingredient.findAll results
 		return Ingredient.findAll()
 		.catch(function(err) {
-			console.log('Error occurred in helpers.findAllIngredients function:', err);		
+			console.log('Error occurred in helpers.findAllIngredients function:', err);
 		})
-	},	
+	},
 
 	createIngredient: function(req, res) {
 		// return instance of Ingredient.create results
@@ -111,15 +111,15 @@ var helpers = {
 		})
 	},
 
-	findSpecificRecipe: function(req, res) {
+	findSpecificRecipe: function(idNum) {
 		// return instance of Ingredient.findAll results
 		return Recipe.find({
-			where: {id: req.params.id}
+			where: {id: idNum}
 		})
 		.catch(function(err) {
-			console.log('Error occurred in helpers.findAllIngredients function:', err);		
+			console.log('Error occurred in helpers.findAllIngredients function:', err);
 		})
-	},	
+	}
 
 }
 
