@@ -214,7 +214,7 @@ if (searchParams.intolerances!=="none") {
             // must replace special characters because we use this later as a class name
             // in ingredient.handlebars
             newRecipe.extendedIngredients[i].aisle = newRecipe.extendedIngredients[i].aisle || "misc";
-            newRecipe.extendedIngredients[i].aisle = newRecipe.extendedIngredients[i].aisle.replace(/\//, "or").replace(/\?/, "misc");
+            newRecipe.extendedIngredients[i].aisle = newRecipe.extendedIngredients[i].aisle.replace(/\//, "or").replace(/\?/, "misc").replace(/[^A-Z0-9]/ig, " ");
             };
 
         var i = 0;
