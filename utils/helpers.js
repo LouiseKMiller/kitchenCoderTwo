@@ -1,6 +1,8 @@
 
 var Recipe = require('../models')["Recipe"];
 var Ingredient = require('../models')["Ingredient"];
+var Category = require('../models')["Category"];
+
 
 var helpers = {
 
@@ -10,9 +12,23 @@ var helpers = {
 
 	findAllIngredients: function(req, res) {
 		// return instance of Ingredient.findAll results
-		return Ingredient.findAll()
-		.catch(function(err) {
-			console.log('Error occurred in helpers.findAllIngredients function:', err);
+		Ingredient.findAll({
+			order: ['name']
+		})
+		.then (function(ingredients){
+			Category.findAll({
+				order: ['className']
+			})
+			.then (function(categories){
+				var hbsObject = {
+					categories: categories,
+					ingredients: ingredients};
+				console.log('ingredient', hbsObject.ingredients[25]);
+				res.render('ingredient', hbsObject);
+			})
+			.catch(function(err) {
+				console.log('Error occurred in helpers.findAllIngredients function:', err);
+			})
 		})
 	},
 

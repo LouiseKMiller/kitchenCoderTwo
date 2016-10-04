@@ -44,12 +44,10 @@ router.get('/home', function (req, res) {
 // find all ingredients
 // and pass to handlebars to process further
 router.get('/ingredient', function(req, res) {
-	helpers.findAllIngredients(req, res)
-	.then (function(ingredient){
-		var hbsObject = {ingredient};
-		res.render('ingredient', hbsObject);
-	});
+	helpers.findAllIngredients(req, res);
+	// res.render('ingredient', hbsObject); // this is done in helper routine
 });
+
 
 // POST REQUEST TO URI  - /INGREDIENT/UPDATE
 // receives new ingredient entered by user
@@ -100,6 +98,8 @@ router.post('/findRecipe', function (req, res) {
 	// return results array so we can render it
 	// in this router file
 	helpers.findDatabaseRecipes(req, res);
+	// res.render('findRecipe', hbsObject); // this is done in helpers routine
+
 });
 
 // GET REQUEST TO URI - /recipe
@@ -107,6 +107,8 @@ router.post('/findRecipe', function (req, res) {
 //
 router.get('/oneRecipe/:id', function(req, res){
 	helpers.findSpecificRecipe(req.params.id, res);
+	// res.render('oneRecipe', hbsObject); // this is done in helpers routine
+
 });
 //
 // GET REQUEST TO URI - /addRecipe

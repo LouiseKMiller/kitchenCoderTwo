@@ -35,6 +35,15 @@ button {margin-left: 10px;
               <div class="ingredientContainer" id="inPantryList">
                 {{! ***** ingredients go here}}
 
+                {{#each categories}} 
+                <div>
+                  <h4 class="categorySection">{{this.className}}</h4>
+                  <ul class = "categoryUL catID{{this.id}}">
+
+                  </ul>
+                </div>
+                {{/each}}
+
               </div>
             </div>
           </div>
@@ -50,6 +59,15 @@ button {margin-left: 10px;
               </br>
               <div class="ingredientContainer" id="notInPantryList">
                 {{! ***** ingredients go here}}
+
+                {{#each categories}} 
+                <div>
+                  <h4 class="categorySection">{{this.className}}</h4>
+                  <ul class = "categoryUL catID{{this.id}}">
+
+                  </ul>
+                </div>
+                {{/each}}
 
               </div>
             </div>
@@ -79,6 +97,11 @@ button {margin-left: 10px;
                   </br>
                   <div class="categoryContainer" id="categoryList">
                     <select name="category" class="form-control" id="categoryOptions">
+
+                    {{#each categories}}
+                      <option value="{{this.name}}">{{this.name}}</option>
+                    {{/each}}
+
                     </select>
                   </div>
                   </br>
@@ -99,88 +122,38 @@ button {margin-left: 10px;
 
 {{!  ******************SCRIPT FILE HERE *****************}}
 <script>
-  var ingredientsHave = [];
-  var ingredientsNotHave = [];
-  var categories = [];
-  // {{! ******** FOR EACH INGREDIENT *************** }}
-    {{#each ingredient}}
-    {{! ******** create array of categories ***}}
-    if (categories.indexOf("{{this.category}}") == -1) {
-      categories.push("{{this.category}}");
-      }
-    {{! ******** create an object for each ingredient **************}}
-    var ing = {name: "{{this.name}}",
-              category: "{{this.category}}",
-              id: "{{this.id}}",
-              };
 
-    {{! ************ ADD TO INPANTRY OR NotInPantry ARRAY *********}}
-    {{#if this.inPantry}}
-      {{! ***** push that object into an array of ingredientsHave }}
-      ingredientsHave.push(ing);
-    {{else}}
-      ingredientsNotHave.push(ing);
-    {{/if}}
+
+  {{! *** CREATE THE HTML FOR EACH INGREDIENT ****}}
+  {{! ********* AND APPEND IT TO THE APPROPRIATE DIVISION *******}}
+  
+  {{#each ingredients}}
+
+    var ingredientLI = $('<li>');
+    ingredientLI.append('<span class="ingredientName sameLine">{{this.name}}</span>');
+
+    if ({{this.inPantry}} == true) {
+
+      ingredientLI.append('<form class="sameLine" action="ingredient/update/{{this.id}}?_method=PUT" method="POST"><input type="hidden" name="inPantry" value="false"><button type="submit">x</button></form>');
+
+      $('#inPantryList').find('.catID{{this.CategoryId}}').append(ingredientLI);
+      
+    } else {
+
+      ingredientLI.append('<form class="sameLine" action="ingredient/update/{{this.id}}?_method=PUT" method="POST"><input type="hidden" name="inPantry" value="true"><button type="submit">x</button></form>');
+
+      $('#notInPantryList').find('.catID{{this.CategoryId}}').append(ingredientLI);
+    }
   {{/each}}
 
-  {{! ********* NOW, WE CREATE A SEPERATE DIVISION FOR EACH CATEGORY ****}}
-  for (var i=0; i<categories.length; i++) {
-    var catDiv = $('<div>');
-    catDiv.append('<h4 class="categorySection">' + categories[i] + '</h4>');
-    catDiv.append('<ul class = "categoryUL ' + categories[i].replace(/[^A-Z0-9]/ig, "_") + '"></ul>');
-    $('#inPantryList').append(catDiv);
-  }
-
-  for (var i=0; i<categories.length; i++) {
-    var catDiv = $('<div>');
-    catDiv.append('<h4 class="categorySection">' + categories[i] + '</h4>');
-    catDiv.append('<ul class = "categoryUL ' + categories[i].replace(/[^A-Z0-9]/ig, "_") + '"></ul>');
-    $('#notInPantryList').append(catDiv);
-
-  }
 
 
-
-  {{! *** THEN, WE CREATE THE HTML FOR EACH INPANTRY INGREDIENT ****}}
-  {{! ********* AND APPEND IT TO THE INPANTRY DIVISION *******}}
-  for (var i=0; i<ingredientsHave.length; i++) {
-    var ingredientLI = $('<li>');
-
-    ingredientLI.append('<span class="ingredientName sameLine">' + ingredientsHave[i].name + '</span>');
-    ingredientLI.append('<form class="sameLine" action="ingredient/update/' + ingredientsHave[i].id + '?_method=PUT" method="POST"><input type="hidden" name="inPantry" value="false"><button type="submit">x</button></form>');
-
-    $('#inPantryList').find('.' + ingredientsHave[i].category.replace(/[^A-Z0-9]/ig, "_")).append(ingredientLI);
-  }
-
-{{! ****** THEN, WE CREATE THE HTML FOR EACH NOTINPANTRY INGREDIENT ****}}
-   {{! ******* AND APPEND IT TO THE NOTINPANTRY CATEGORY DIVISION *******}}
-  for (var i=0; i<ingredientsNotHave.length; i++) {
-    var ingredientLI = $('<li>');
-
-    ingredientLI.append('<span class="ingredientName sameLine">' + ingredientsNotHave[i].name + '</span>');
-    ingredientLI.append('<form class="sameLine" action="ingredient/update/' + ingredientsNotHave[i].id + '?_method=PUT" method="POST"><input type="hidden" name="inPantry" value="true"><button type="submit">x</button></form>');
-
-    $('#notInPantryList').find('.' + ingredientsNotHave[i].category).append(ingredientLI);
-  }
-
-  {{! ******** CREATE OPTIONS FOR SELECT LIST IN ADD INGREDIENT SECTION  }}
-  {{! ********* NOW, WE CAN GIVE OPTION FOR EACH CATEGORY ****}}
-
-  for (var i=0; i<categories.length; i++) {
-    var opt = '<option value="' + categories[i] + '">' + categories[i] + '</option>';
-
-    $('#categoryOptions').append(opt);
-  }
-
-
-
-
-$(document).ready(function() {
-  $('.categorySection').on('click', function(event){
-    console.log("this was clicked");
-    event.stopPropagation();
-    $(this).closest('div').find('.categoryUL').slideToggle();
-    })
-});
+  $(document).ready(function() {
+    $('.categorySection').on('click', function(event){
+      console.log("this was clicked");
+      event.stopPropagation();
+      $(this).closest('div').find('.categoryUL').slideToggle();
+      })
+  });
 </script>
 

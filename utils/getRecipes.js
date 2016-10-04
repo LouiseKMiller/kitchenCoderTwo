@@ -209,14 +209,6 @@ if (searchParams.intolerances!=="none") {
     function processOneRecipe(newRecipe){
         seqConnection.sync();
 
-        for (var i=0; i<newRecipe.extendedIngredients.length; i++) {
-            // our first shot at cleaning up the category value for each ingredient
-            // must replace special characters because we use this later as a class name
-            // in ingredient.handlebars
-            newRecipe.extendedIngredients[i].aisle = newRecipe.extendedIngredients[i].aisle || "misc";
-            newRecipe.extendedIngredients[i].aisle = newRecipe.extendedIngredients[i].aisle.replace(/\//, "or").replace(/\?/, "misc").replace(/[^A-Z0-9]/ig, " ");
-            };
-
         var i = 0;
         // if we already have all the ingredients and they are inPantry, then recipe's
         // canMakeFlag should be set to true.
@@ -224,23 +216,42 @@ if (searchParams.intolerances!=="none") {
         function forloop(){
             if (i < newRecipe.extendedIngredients.length){
         //    if (i < 5){
-                models.Ingredient.findOrCreate({where: {spoonID: newRecipe.extendedIngredients[i].id}, defaults: {name: newRecipe.extendedIngredients[i].name, category: newRecipe.extendedIngredients[i].aisle}})
+
+                newRecipe.extendedIngredients[i].aisle = newRecipe.extendedIngredients[i].aisle || "misc";
+                newRecipe.extendedIngredients[i].aisle = newRecipe.extendedIngredients[i].aisle.replace(/\//, "or").replace(/\?/, "misc");
+
+                models.Ingredient.findOrCreate(
+                    {where: {spoonID: newRecipe.extendedIngredients[i].id}, 
+                    defaults: 
+                        {name: newRecipe.extendedIngredients[i].name, category: newRecipe.extendedIngredients[i].aisle}
+                    })
                 .spread(function(ingr, create){
-                    i++;
                     // when we add an ingredient, we take this opportunity to see if we can make the current recipe we are saving
                     // with the ingredients we currently have in our kitchen
                     // If we had to add any ingredients, we mark canMake = false
                     // if we didn't have to add any ingredients, we do a further check to see if all
                     // ingredients are in pantry.  If any inPantry is false for any, then canMake = false
-                    if (create) {canMakeFlag = false;}
+                    if (create) {
+                        canMakeFlag = false;
+                    }
                     else {
                         if (!ingr.dataValues.inPantry) {canMakeFlag = false};
-                    }
-                    forloop();
+                    };
+                    models.Category.findOrCreate(
+                        {where: {name: ingr.category}, 
+                        defaults: 
+                            {name: ingr.category,
+                            className: ingr.category.replace(/[^,A-Z0-9]/ig, " ")}
+                        })
+                        .spread(function(cat, create){
+                            i++;
+                            cat.addIngredient(ingr.id);
+                            forloop();
+                        })
+                        .catch(function(err) {
+                            console.log('Error occurred in processOneRecipe function:', err);
+                        });
                 })
-                .catch(function(err) {
-                    console.log('Error occurred in processOneRecipe function:', err);
-                });
             }
             else {
                 createRecipe(newRecipe, canMakeFlag);
