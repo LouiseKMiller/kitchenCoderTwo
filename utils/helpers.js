@@ -23,7 +23,6 @@ var helpers = {
 				var hbsObject = {
 					categories: categories,
 					ingredients: ingredients};
-				console.log('ingredient', hbsObject.ingredients[25]);
 				res.render('ingredient', hbsObject);
 			})
 			.catch(function(err) {
@@ -37,8 +36,12 @@ var helpers = {
 		return Ingredient.create(
 			{name: req.body.name,
 			category: req.body.category})
-		.catch(function(err) {
-			console.log('Error occurred in helpers.createIngredient function:', err);
+		.then (function(ingredient){
+			Category.find({where: {name: ingredient.category}})
+			.then (function(cat){cat.addIngredient(ingredient.id)})
+			.catch(function(err) {
+				console.log('Error occurred in helpers.createIngredient function:', err);
+			})
 		})
 	},
 
@@ -46,7 +49,7 @@ var helpers = {
 		// return number of recipes you can now make
 		// ************** TO DO *************************************
 		return Ingredient.update({inPantry: req.body.inPantry }, {where: {id: req.params.id}})
-		.then (function () {
+		.then (function (updatedIngredient) {
 		// see if any recipes' canMake status is affected by change in ingredient's inPantry status
 			Recipe.findAll({
 			include:[{
@@ -55,6 +58,7 @@ var helpers = {
 				}]
 			})
 			.then (function(recipes){
+				var returnValue;
 				recipes.forEach(function(recipe){
 					if (req.body.inPantry=='false') {
 						recipe.update({canMake: false});
@@ -63,7 +67,7 @@ var helpers = {
 							where: {inPantry: false}
 						})
 						.then(function(ingredients){
-							if (ingredients.length==0) {recipe.update({canMake: true})}
+							if (ingredients.length==0) {recipe.update({canMake: true})};
 						})
 					}
 				})

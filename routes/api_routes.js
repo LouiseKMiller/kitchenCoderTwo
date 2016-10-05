@@ -65,10 +65,11 @@ router.post('/ingredient/update', function(req, res) {
 // PUT REQUEST TO URI  - /INGREDIENT/UPDATE/:id
 // user identifies an ingredient and a change to the inStock status
 // we update the database with that information
-router.put('/ingredient/update/:id', function(req, res) {
+router.post('/ingredient/update/:id', function(req, res) {
 	helpers.updateIngredientPantryStatus(req, res)
 	.then (function(){
-		res.redirect('/ingredient');
+		console.log("you are here", req.body.inPantry);
+		res.json(req.body.inPantry);
 	});
 });
 

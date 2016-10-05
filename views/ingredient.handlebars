@@ -17,6 +17,15 @@ button {margin-left: 10px;
               overflow:scroll;
               border:7px solid;
               padding:1%; }
+.allOutStyle {
+  background-color: grey;
+  font-weight: 200;
+}
+.inPantryStyle {
+  background-color: green;
+  font-weight: bold;
+}
+
 </style>
 
 {{! ************* MAIN HEADING}}
@@ -27,12 +36,12 @@ button {margin-left: 10px;
       <h1 class="heading"><span> UPDATE YOUR PANTRY </span></h1>
 
         {{! ************* DIVISION FOR INGREDIENTS IN PANTRY}}
-        <div class="col-xs-12 col-md-6 ingredients">
-          <div class="container inlineB inPantry">
+        <div class="col-xs-12 col-md-7 ingredients">
+          <div class="container inlineB pantry">
             <div class="containerTitle">
-              <h2><strong>Ingredients that you have</strong></h2>
+              <h2><strong>List of Ingredients</strong></h2>
               </br>
-              <div class="ingredientContainer" id="inPantryList">
+              <div class="ingredientContainer" id="pantryList">
                 {{! ***** ingredients go here}}
 
                 {{#each categories}} 
@@ -49,75 +58,47 @@ button {margin-left: 10px;
           </div>
         </div>
 
+        {{! ************* DIVISION FOR FORM TO ADD INGREDIENT}}
+        <div class="col-xs-12 col-md-5 ingredients">
+          <div class="block">
+            <div class="container inlineB addIngredient">
+              <div class="containerTitle">
+                <form role="form" class="create-update-form" action="ingredient/update" method="POST">
+                  <div class="form-group">
+                    <!-- Here we create the text box for capturing the search term-->
+                    <label for="search">
+                      <h2><strong>Add Your Ingredient Here: </strong></h2>
+                    </label>
+                    </br>
+                    <input type="text" class="form-control" id="bu" name="name">
+                    </br>
+                    <div class="categoryContainer" id="categoryList">
+                      <select name="category" class="form-control" id="categoryOptions">
 
+                      {{#each categories}}
+                        <option value="{{this.name}}">{{this.className}}</option>
+                      {{/each}}
 
-        {{! ************* DIVISION FOR INGREDIENTS NOT IN PANTRY}}
-        <div class="col-xs-12 col-md-6 ingredients">
-          <div class="container inlineB notInPantry">
-            <div class="containerTitle">
-              <h2><strong>Ingredients you do not have</strong></h2>
-              </br>
-              <div class="ingredientContainer" id="notInPantryList">
-                {{! ***** ingredients go here}}
-
-                {{#each categories}} 
-                <div>
-                  <h4 class="categorySection">{{this.className}}</h4>
-                  <ul class = "categoryUL catID{{this.id}}">
-
-                  </ul>
-                </div>
-                {{/each}}
-
+                      </select>
+                    </div>
+                    </br>
+                    </br>
+                    </br>
+                    <button id="add" type="submit" class="btn btn-default" ><i class="fa fa-check-square"></i> Add Now</button>
+                    <button type="button" class="btn btn-default" id="clearAll"><i class="fa fa-trash"></i> Clear Results</button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
         </div>
+
 
       </div> {{!end of block div}}
     </div> {{! end of col-md-12 div}}
   </div> {{! end of row div}}
 
 
-  <div class="row"
-
-    {{! ************* DIVISION FOR FORM TO ADD INGREDIENT}}
-    <div class="col-xs-12 col-md-4 ingredients">
-      <div class="block">
-        <div class="container inlineB addIngredient">
-          <div class="containerTitle">
-            <form role="form" class="create-update-form" action="ingredient/update"method="POST">
-              <div class="form-group">
-                <!-- Here we create the text box for capturing the search term-->
-                <label for="search">
-                  <h2><strong>Add Your Ingredient Here: </strong></h2>
-                </label>
-                </br>
-                <input type="text" class="form-control" id="bu" name="name">
-                  </br>
-                  <div class="categoryContainer" id="categoryList">
-                    <select name="category" class="form-control" id="categoryOptions">
-
-                    {{#each categories}}
-                      <option value="{{this.name}}">{{this.name}}</option>
-                    {{/each}}
-
-                    </select>
-                  </div>
-                  </br>
-                  </br>
-                  </br>
-                  <button id="add" type="submit" class="btn btn-default" ><i class="fa fa-check-square"></i> Add Now</button>
-                  <button type="button" class="btn btn-default" id="clearAll"><i class="fa fa-trash"></i> Clear Results</button>
-                </div>
-              </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-  </div>
 </div>
 
 {{!  ******************SCRIPT FILE HERE *****************}}
@@ -129,21 +110,17 @@ button {margin-left: 10px;
   
   {{#each ingredients}}
 
+
     var ingredientLI = $('<li>');
-    ingredientLI.append('<span class="ingredientName sameLine">{{this.name}}</span>');
 
-    if ({{this.inPantry}} == true) {
+    var statusStyle =({{this.inPantry}} ? "inPantryStyle" : "allOutStyle");
+    var changeStatusTo = ({{this.inPantry}} ? "0" : "1");
+    
+    ingredientLI.append('<button data-id="{{this.id}}" data-pantryStatus="' + changeStatusTo + '" class="ingrButton ' + statusStyle + '" type="button">{{this.name}}</button>');
 
-      ingredientLI.append('<form class="sameLine" action="ingredient/update/{{this.id}}?_method=PUT" method="POST"><input type="hidden" name="inPantry" value="false"><button type="submit">x</button></form>');
 
-      $('#inPantryList').find('.catID{{this.CategoryId}}').append(ingredientLI);
+    $('#pantryList').find('.catID{{this.CategoryId}}').append(ingredientLI);
       
-    } else {
-
-      ingredientLI.append('<form class="sameLine" action="ingredient/update/{{this.id}}?_method=PUT" method="POST"><input type="hidden" name="inPantry" value="true"><button type="submit">x</button></form>');
-
-      $('#notInPantryList').find('.catID{{this.CategoryId}}').append(ingredientLI);
-    }
   {{/each}}
 
 
@@ -154,6 +131,29 @@ button {margin-left: 10px;
       event.stopPropagation();
       $(this).closest('div').find('.categoryUL').slideToggle();
       })
+
+
+    $('#pantryList').on('click', '.ingrButton', function(){
+      var updateURL = "ingredient/update/" + $(this).attr('data-id');
+      var ingButton = $(this);
+      var value = $(this).attr('data-pantryStatus');
+      $.post(updateURL,
+        {inPantry: value}, 
+        function(result){
+          if(result == "0"){
+            ingButton.removeClass('inPantryStyle');
+            ingButton.addClass('allOutStyle');
+            ingButton.attr('data-pantryStatus', '1');
+          } else {
+            ingButton.removeClass('allOutStyle');
+            ingButton.addClass('inPantryStyle');
+            ingButton.attr('data-pantryStatus', '0');
+          }
+        })
+    });
+
   });
+
+
 </script>
 
