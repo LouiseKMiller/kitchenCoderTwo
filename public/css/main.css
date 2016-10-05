@@ -242,8 +242,8 @@ a:active {
     blog Start
 --*/
 #blog {
-  padding-top: 30px;
-  padding-bottom: 100px;
+  padding-top: 0px;
+  padding-bottom: 0px;
   background: url("images/blog/blog-bg.jpg");
   background-repeat: no-repeat;
   background-size: cover;
@@ -263,7 +263,7 @@ a:active {
   width: 100%;
   height: 100%;
   background: #ffffff;
-  opacity: 0.3;
+  opacity: 0.1;
 }
 #blog .block .heading {
   color: #fff;

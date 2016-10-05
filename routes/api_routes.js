@@ -44,7 +44,8 @@ router.get('/home', function (req, res) {
 // find all ingredients
 // and pass to handlebars to process further
 router.get('/ingredient', function(req, res) {
-	helpers.findAllIngredients(req, res);
+	var hblPage = 'ingredient';
+	helpers.findAllIngredients(req, res, hblPage);
 	// res.render('ingredient', hbsObject); // this is done in helper routine
 });
 
@@ -90,6 +91,8 @@ router.post('/ingredient/update/:id', function(req, res) {
 // add addition limitation that all ingredients must be inStock
 //
 router.get('/findRecipe', function (req, res) {
+	helpers.findAllIngredients(req, res);
+
 	res.render('findRecipe');
 });
 
@@ -118,9 +121,26 @@ router.get('/oneRecipe/:id', function(req, res){
 // add addition limitation that all ingredients must be inStock
 //
 router.get('/addRecipe', function (req, res) {
-	res.render('addRecipe');
+	var hblPage = 'addRecipe';
+	helpers.findAllIngredients(req, res, hblPage);
 });
 //
+// POST REQUEST TO URI - /addRecipe
+// user presented with page where she can
+// query database for matching recipes
+// add addition limitation that all ingredients must be inStock
+//
+router.post('/addRecipe', function (req, res) {
+	console.log("DATA FROM ADD RECIPE PAGE received ");
+	console.log("title:", req.body.title);
+	console.log("ingredients:", req.body.ingredients);
+	console.log("vegan:", req.body.vegan);
+	console.log("vegetarian:", req.body.vegetarian);
+	console.log("glutenFree:", req.body.glutenFree);
+	console.log("instructions:", req.body.instructions);
+
+	res.render('addRecipe');
+});
 
 //******************************************************
 //  ROUTE FOR ADMINISTRATOR

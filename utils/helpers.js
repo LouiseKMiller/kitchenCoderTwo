@@ -10,7 +10,7 @@ var helpers = {
 //    HELPER FUNCTIONS FOR INGREDIENTS
 //
 
-	findAllIngredients: function(req, res) {
+	findAllIngredients: function(req, res, hblPage) {
 		// return instance of Ingredient.findAll results
 		Ingredient.findAll({
 			order: ['name']
@@ -23,7 +23,7 @@ var helpers = {
 				var hbsObject = {
 					categories: categories,
 					ingredients: ingredients};
-				res.render('ingredient', hbsObject);
+				res.render(hblPage, hbsObject);
 			})
 			.catch(function(err) {
 				console.log('Error occurred in helpers.findAllIngredients function:', err);
