@@ -53,7 +53,24 @@ button {margin-left: 10px;
       <div class="row">
         <div class="container col-md-12">
           <label for="recipe">Recipe Name: </label>
-          <input type="text" class="form-control" id="recipe" name="title">
+          <input type="text" class="form-control" id="title">
+
+          <label for="cuisine">Cuisine: </label>
+          <input type="text" class="form-control" id="cuisine">
+
+          <label for="type">Type: </label>
+          <input type="text" class="form-control" id="type">
+
+          <label for="prepMins">Preparation Minutes: </label>
+          <input type="text" class="form-control" id="prepMins">
+
+          <label for="cookMins">Cooking Minutes: </label>
+          <input type="text" class="form-control" id="cookMins">
+
+          <label for="servings">Servings: </label>
+          <input type="text" class="form-control" id="servings">
+
+
         </div>
       </div>
 
@@ -79,7 +96,7 @@ button {margin-left: 10px;
               </br>
               <div class="ingredientContainer" id="pantryList">
               {{! ***** ingredients grouped by categories go here}}
-              {{#each categories}} 
+              {{#each categories}}
                 <div>
                   <h4 class="categorySection">{{this.className}}</h4>
                   <ul class = "categoryUL catID{{this.id}}">
@@ -100,9 +117,9 @@ button {margin-left: 10px;
 
             <label for="preferences">Special Diet: </label>
             <br>
-              <label class="checkbox-inline"><input type="checkbox" value="1" name="vegan">Vegan </label>
-              <label class="checkbox-inline"><input type="checkbox" value="1" name="vegetarian">Vegetarian </label>
-              <label class="checkbox-inline"><input type="checkbox" value="1" name="glutenFree">Gluten-Free</label>
+              <label class="checkbox-inline"><input type="checkbox" value="1" id="vegan">Vegan</label>
+              <label class="checkbox-inline"><input type="checkbox" value="1" id="vegetarian">Vegetarian</label>
+              <label class="checkbox-inline"><input type="checkbox" value="1" id="glutenFree">Gluten-Free</label>
 
             <br>
             <br>
@@ -110,37 +127,33 @@ button {margin-left: 10px;
 
 
             <label for="instructions">Instructions: </label>
-            <textarea class="form-control" rows="8" id="instructions" name='instructions'></textarea>
+            <textarea class="form-control" rows="8" id="instructions" id="instructions"></textarea>
 
-            {{!-- form submit button  --}}  
-            <button type="submit" class="btn btn-default form-control" align="center" VALUE="Reload Page" onClick="history.go(0)">Add Recipe</button>
+            {{!-- form submit button  --}}
+            <button type="button" id="submitRecipe" class="btn btn-default form-control" align="center">Add Recipe</button>
 
         </div>{{!-- .container col-md-12 --}}
       </div>{{!-- .row --}}
     </form>
-  </div>{{!-- .container --}}  
+  </div>{{!-- .container --}}
 </section>{{!-- #addRecipe --}}
 
 <script>
- {{! *** CREATE THE HTML FOR EACH INGREDIENT ****}}
-  {{! ********* AND APPEND IT TO THE APPROPRIATE DIVISION *******}}
-  
+ {{! *** CREATE THE HTML FOR EACH INGREDIENT **** --}}
+  {{! ********* AND APPEND IT TO THE APPROPRIATE DIVISION ******* --}}
+
   {{#each ingredients}}
 
     var ingredientLI = $('<li>');
 
     var statusStyle =({{this.inPantry}} ? "inPantryStyle" : "allOutStyle");
     var changeStatusTo = ({{this.inPantry}} ? "0" : "1");
-    
+
     ingredientLI.append('<button data-id="{{this.id}}" data-pantryStatus="' + changeStatusTo + '" data-name="{{this.name}}" class="ingrButton ' + statusStyle + '" type="button">{{this.name}}</button>');
 
 
     $('#pantryList').find('.catID{{this.CategoryId}}').append(ingredientLI);
-      
   {{/each}}
-
-
-
 
 $(document).ready(function() {
 
@@ -152,10 +165,9 @@ $(document).ready(function() {
     console.log("this was clicked");
     event.stopPropagation();
     $(this).closest('div').find('.categoryUL').slideToggle();
-    })
+    });
 
-
-  $('#pantryList').on('click', '.ingrButton', function(){
+    $('#pantryList').on('click', '.ingrButton', function(){
     event.stopPropagation();
     pendingIngredient.id = $(this).attr('data-id');
     pendingIngredient.name = $(this).attr('data-name');
@@ -163,11 +175,11 @@ $(document).ready(function() {
   });
 
   $('#addToList').on('click', function(){
-    ingredientInfo.push({
-      id: (pendingIngredient.id || ""),
-      name: pendingIngredient.name,
-      amount: $('#ingredientAmount').val().trim(),
-      unit: $('#ingredientUnit').val().trim()
+  ingredientInfo.push({
+    id: (pendingIngredient.id || ""),
+    name: pendingIngredient.name,
+    amount: $('#ingredientAmount').val().trim(),
+    unit: $('#ingredientUnit').val().trim()
     });
     pendingIngredient = {};
     var lastIndex = (ingredientInfo.length - 1);
@@ -176,24 +188,40 @@ $(document).ready(function() {
 
     $('#ingredientName').val("");
     $('#ingredientAmount').val("");
-    $('#ingredientUnit').val("");     
-  })
+    $('#ingredientUnit').val("");
+  });
 
+  $('#submitRecipe').on('click', function(){
+    event.stopPropagation();
 
+    var recipeTitle = $('#title').val().trim();
+    if (recipeTitle) {
+
+      var updateURL = "addRecipe";
+      var data = {
+        title: $('#title').val().trim(),
+        cuisine: $('#cuisine').val().trim(),
+        vegan: $('#vegan').val().trim(),
+        vegetarian: $('#vegetarian').val().trim(),
+        glutenFree: $('#glutenFree').val().trim(),
+        servings: $('#servings').val().trim(),
+        preparationMinutes: $('#prepMins').val().trim(),
+        cookingMinutes: $('#cookMins').val().trim(),
+        instructions: $('#instructions').val().trim(),
+        spoonID: 'none',
+        ingredients: ingredientInfo
+      };
+
+      $.post(updateURL,
+        data,
+        function(result){
+          console.log("recipe added");
+        })
+    } else
+    { console.log("need a recipe title");}
+  });
 });
 
-
-
-
-
-
-
-function pushToDB() {
-  var recipeIngs = document.getElementById("ingredientlist");
-  var recipeIngList = [];
-  for (var i = 0; i < recipeIngs.length; i++){
-    recipeIngList.push(String(recipeIngs[i].innerHTML));
-  }
-  /// recipeIngList is a list that contains all of the ingredients 
-}
 </script>
+
+

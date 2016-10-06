@@ -131,14 +131,7 @@ router.get('/addRecipe', function (req, res) {
 // add addition limitation that all ingredients must be inStock
 //
 router.post('/addRecipe', function (req, res) {
-	console.log("DATA FROM ADD RECIPE PAGE received ");
-	console.log("title:", req.body.title);
-	console.log("ingredients:", req.body.ingredients);
-	console.log("vegan:", req.body.vegan);
-	console.log("vegetarian:", req.body.vegetarian);
-	console.log("glutenFree:", req.body.glutenFree);
-	console.log("instructions:", req.body.instructions);
-
+	helpers.addRecipe(req, res);
 	res.render('addRecipe');
 });
 
