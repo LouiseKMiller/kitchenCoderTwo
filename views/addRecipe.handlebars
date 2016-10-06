@@ -175,12 +175,13 @@ $(document).ready(function() {
   });
 
   $('#addToList').on('click', function(){
-  ingredientInfo.push({
-    id: (pendingIngredient.id || ""),
-    name: pendingIngredient.name,
-    amount: $('#ingredientAmount').val().trim(),
-    unit: $('#ingredientUnit').val().trim()
-    });
+    ingredientInfo.push({
+      id: (pendingIngredient.id || ""),
+      name: pendingIngredient.name,
+      amount: $('#ingredientAmount').val().trim(),
+      unit: $('#ingredientUnit').val().trim()
+      });
+
     pendingIngredient = {};
     var lastIndex = (ingredientInfo.length - 1);
     var ingrTable = $('#ingrTable');
@@ -193,14 +194,14 @@ $(document).ready(function() {
 
   $('#submitRecipe').on('click', function(){
     event.stopPropagation();
-
+    console.log("ingredientInfo: ", ingredientInfo);
     var recipeTitle = $('#title').val().trim();
     if (recipeTitle) {
 
-      var updateURL = "addRecipe";
       var data = {
-        title: $('#title').val().trim(),
+        title: recipeTitle,
         cuisine: $('#cuisine').val().trim(),
+        type: $('#type').val().trim(),
         vegan: $('#vegan').val().trim(),
         vegetarian: $('#vegetarian').val().trim(),
         glutenFree: $('#glutenFree').val().trim(),
@@ -208,14 +209,14 @@ $(document).ready(function() {
         preparationMinutes: $('#prepMins').val().trim(),
         cookingMinutes: $('#cookMins').val().trim(),
         instructions: $('#instructions').val().trim(),
-        spoonID: 'none',
+        spoonID: 0,
         ingredients: ingredientInfo
       };
-
-      $.post(updateURL,
-        data,
-        function(result){
-          console.log("recipe added");
+      $.ajax({
+        type: 'POST',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        url: 'addRecipe'
         })
     } else
     { console.log("need a recipe title");}

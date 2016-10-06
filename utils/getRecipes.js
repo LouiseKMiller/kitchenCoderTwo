@@ -221,8 +221,8 @@ if (searchParams.intolerances!=="none") {
                 newRecipe.extendedIngredients[i].aisle = newRecipe.extendedIngredients[i].aisle.replace(/\//, "or").replace(/\?/, "misc");
 
                 models.Ingredient.findOrCreate(
-                    {where: {spoonID: newRecipe.extendedIngredients[i].id}, 
-                    defaults: 
+                    {where: {spoonID: newRecipe.extendedIngredients[i].id},
+                    defaults:
                         {name: newRecipe.extendedIngredients[i].name, category: newRecipe.extendedIngredients[i].aisle}
                     })
                 .spread(function(ingr, create){
@@ -238,8 +238,8 @@ if (searchParams.intolerances!=="none") {
                         if (!ingr.dataValues.inPantry) {canMakeFlag = false};
                     };
                     models.Category.findOrCreate(
-                        {where: {name: ingr.category}, 
-                        defaults: 
+                        {where: {name: ingr.category},
+                        defaults:
                             {name: ingr.category,
                             className: ingr.category.replace(/[^,A-Z0-9]/ig, " ")}
                         })

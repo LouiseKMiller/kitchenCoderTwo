@@ -148,7 +148,57 @@ var helpers = {
 				console.log('Error occurred in helpers.findSpecificRecipe function:', err);
 			})
 		})
+	},
+
+	addRecipe: function(req, res) {
+		// return instance of Recipe.create results
+		var vegetarian = ((req.body.vegetarian) ? true : false);
+		var vegan = ((req.body.vegan) ? true : false);
+		var glutenFree = ((req.body.glutenFree) ? true : false);
+		console.log ("ingredients: ", req.body.ingredients);
+		return Recipe.create(
+			{title: req.body.title,
+			cuisine: req.body.cuisine,
+			type: req.body.type,
+			vegan: vegan,
+			glutenFree: glutenFree,
+			vegetarian: vegetarian,
+			servings: parseInt(req.body.servings),
+			preparationMinutes: parseInt(req.body.preparationMinutes),
+			cookingMinutes: parseInt(req.body.cookingMinutes),
+			instructions: req.body.instructions,
+			spoonID: parseInt(req.body.spoonID)
+		})
+		.then (function(recipe){
+			var ingredientsArray = req.body.ingredients;
+			var ingredientIDs = ingredientsArray.map(function(eachIngredient){
+                    return eachIngredient.id;});
+            return Ingredient.findAll({where: {id: ingredientIDs}})
+
+                // then take all ingredients and process each one individually
+                .then(function(ingredients){
+                    ingredients.forEach(function(ingredient){
+                        var index = 0;
+                        // find the ingredient in the newRecipe ingredients array that matches this instance.  have to do this to keep the proper association between the ingredient and its respective amount/units
+                        for (var i=0; i<ingredientsArray.length; i++) {
+                                if (ingredientsArray[i].id == ingredient.spoonID) {index = i};
+                            }
+
+                            // then associate that ingredient with the recipe
+                            // along with the additional attributes of amount and units
+                            recipe.addIngredient(
+                                ingredient,
+                                {amount: ingredientsArray[index].amount,
+                                 unit: ingredientsArray[index].unit}
+                            );
+                        });
+                    })
+				.catch(function(err){
+					console.log('Error occurred in helpers.addRecipe function:', err);
+				})
+		})
 	}
+
 
 }
 
