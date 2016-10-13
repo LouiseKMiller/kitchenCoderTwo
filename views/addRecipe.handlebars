@@ -1,23 +1,23 @@
 
 <style>
-.panel-body a
-    {
-        word-break:break-all;
-    }
-.sameLine {display: inline-block;}
-button {margin-left: 10px;
-        outline: none;
-        border: none;
-        background: none;}
-.categoryUL {display: none;}
-.inlineB {display: inline-block;
-          vertical-align: top;
-          width: 300px;}
-/*.ingredients {overflow: scroll; }*/
-.ingredients {height: 35em;
-              overflow:scroll;
-              border:7px solid;
-              padding:1%; }
+
+
+.sameLine {
+  display: inline-block;
+}
+
+.categoryUL {
+  display: none;
+}
+
+#instructions{
+  max-height: 500px;
+  overflow-y: auto;
+}
+.instructions::-webkit-scrollbar{
+  display: none;
+}
+
 .allOutStyle {
   background-color: grey;
   font-weight: 200;
@@ -27,120 +27,248 @@ button {margin-left: 10px;
   font-weight: bold;
 }
 
-#ingrTable {
-  border: 2px solid black;
-  min-height: 100px;
-  width: 500px;
+.ingredientContainer {
+  max-height: 430px;
 }
+
+#addToList {
+  margin: 30px auto;
+
+  position: absolute;
+}
+
+#submitRecipe {
+  margin: 30px auto;
+  font-weight: 600;
+  color: red;
+  background: buttonface;
+  height: 50px;
+  border: 2px solid red;
+}
+
+
+table {
+  min-height: 250px;
+}
+
 
 </style>
 
 
-<section id="addRecipe">
-  <div class="container">
+{{!-- ************* MAIN HEADING ********************************** --}}
+<div class="background-area content">
+  <div class="containerTitle blurBackground">
+    <h1 class="heading">Add A Recipe</h1>
+  </div>
+
+  <section id="addRecipe">
+    <div class="container">
+
+      <form class="create-update-form" id="addRecipeForm" >
+        <div class="row"> {{!-- .row --}}
+          <div class="col-md-12"> 
 
 
-    <div class="row">
-      <div class="container col-md-12">
-
-        <div class="containerTitle">
-          <h2 class="heading"><span>Add Your Recipe!</span></h2>
-        </div> {{!-- .containerTitle --}}
-      </div> {{!-- .container col-md-12 --}}
-    </div> {{!-- .row --}}
-
-    <form class="create-update-form" id="addRecipeForm" >
-      <div class="row">
-        <div class="container col-md-12">
-          <label for="recipe">Recipe Name: </label>
-          <input type="text" class="form-control" id="title">
-
-          <label for="cuisine">Cuisine: </label>
-          <input type="text" class="form-control" id="cuisine">
-
-          <label for="type">Type: </label>
-          <input type="text" class="form-control" id="type">
-
-          <label for="prepMins">Preparation Minutes: </label>
-          <input type="text" class="form-control" id="prepMins">
-
-          <label for="cookMins">Cooking Minutes: </label>
-          <input type="text" class="form-control" id="cookMins">
-
-          <label for="servings">Servings: </label>
-          <input type="text" class="form-control" id="servings">
-
-
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-xs-12 col-md-8 ingredients">
-          <label for="ingredient">Recipe Ingredients </label>
-          <br>
-          <table id="ingrTable">
-
-          </table>
-          <br>
-          <input type="text" class="form-control" id="ingredientName">
-          <input type="text" class="form-control" id="ingredientAmount">
-          <input type="text" class="form-control" id="ingredientUnit">
-          <button type="button" class="btn btn-default form-control" id="addToList">Add Ingredient</button>
-        </div> {{!-- .col-xs-12 col-md-6 --}}
-
-        <div class="col-xs-12 col-md-4 ingredients">
-          <label for="list">Ingredient List: </label>
-
-          <div class="container inlineB pantry">
-            <div class="containerTitle">
-              </br>
-              <div class="ingredientContainer" id="pantryList">
-              {{! ***** ingredients grouped by categories go here}}
-              {{#each categories}}
-                <div>
-                  <h4 class="categorySection">{{this.className}}</h4>
-                  <ul class = "categoryUL catID{{this.id}}">
-
-                  </ul>
+            <div class="col-md-6">
+              <div class="panel panel-default">
+                <div class="panel-heading">Basic Info
                 </div>
-              {{/each}}
+                <div class="panel-body">
+
+                  <div class="form-group">
+                    <label for="recipe">Recipe Name: </label>
+                    <input type="text" class="form-control" id="title">
+                  </div> {{!-- .form-group --}}
+
+                  <div class="form-group">
+                    <label for="cuisine">Cuisine: </label>
+                    <select class="form-control" id="cuisine">
+                        <option value="any" selected>Any</option>
+                        <option value="African">African</option>
+                        <option value="American">American</option>
+                        <option value="British">British</option>
+                        <option value="Cajun">Cajun</option>
+                        <option value="Caribbean">Caribbean</option>
+                        <option value="Chinese">Chinese</option>
+                        <option value="Eastern+European">Eastern European</option>
+                        <option value="German">German</option>
+                        <option value="Greek">Greek</option>
+                        <option value="Indian">Indian</option>
+                        <option value="Irish">Irish</option>
+                        <option value="Italian">Italian</option>
+                        <option value="French">French</option>
+                        <option value="Japanese">Japanese</option>
+                        <option value="Jewish">Jewish</option>
+                        <option value="Korean">Korean</option>
+                        <option value="Latin+American">Latin American</option>
+                        <option value="Mexican">Mexican</option>
+                        <option value="Middle+Eastern">Middle Eastern</option>
+                        <option value="Southern">Southern</option>
+                        <option value="Spanish">Spanish</option>
+                        <option value="Thai">Thai</option>
+                        <option value="Vietnamese">Vietnamese</option>
+                        <option value="Nordic">Nordic</option>
+                    </select>
+                  </div> {{!-- .form-group --}}
+
+                  <div class="form-group">
+                    <label for="type">Type: </label>
+                    <select class="form-control" id="type">
+                      <option value="any">Any</option>
+                      <option value="appetizer">Appetizer</option>
+                      <option value="beverage">Beverage</option>
+                      <option value="bread">Bread</option>
+                      <option value="breakfast">Breakfast</option>
+                      <option value="dessert">Dessert</option>
+                      <option value="drink">Drink</option>
+                      <option value="main+course">Main Course</option>
+                      <option value="salad">Salad</option>
+                      <option value="sauce">Sauce</option>
+                      <option value="side+dish">Side Dish</option>
+                      <option value="soup">Soup</option>
+                    </select>
+                  </div> {{!-- .form-group --}}
+
+                  <div class="form-group">
+                    <label for="prepMins">Preparation Minutes: </label>
+                    <input type="text" class="form-control" id="prepMins">
+                  </div> {{!-- .form-group --}}
+
+                  <div class="form-group">
+                    <label for="cookMins">Cooking Minutes: </label>
+                    <input type="text" class="form-control" id="cookMins">
+                  </div> {{!-- .form-group --}}
+
+                  <div class="form-group">
+                    <label for="servings">Servings: </label>
+                    <input type="text" class="form-control" id="servings">
+                  </div> {{!-- .form-group --}}
+
+                  <div class="form-group">
+                    <label class="checkbox-inline">Vegan</label>
+                    <input type="checkbox" value="1" id="vegan">
+                  </div> {{!-- .form-group --}}
+
+                  <div class="form-group">
+                    <label class="checkbox-inline">Vegetarian</label>
+                    <input type="checkbox" value="1" id="vegetarian">
+                  </div> {{!-- .form-group --}}
+
+
+                  <div class="form-group">
+                    <label class="checkbox-inline">Gluten-Free</label>
+                    <input type="checkbox" value="1" id="glutenFree">
+                  </div> {{!-- .form-group --}}
+
+
+                </div> {{!-- .panel-body --}}
+              </div> {{!-- .panel panel-default --}}
+                    
+            </div> {{!-- .container col-md-x --}}
+
+
+            <div class="container col-md-6">
+              <div class="panel panel-default">
+                <div class="panel-heading">Instructions
+                </div>
+                <div class="panel-body">
+                  <div class="form-group">
+
+                    <label for="instructions">Instructions: </label>
+                    <textarea class="form-control" rows="8" id="instructions" id="instructions"></textarea>
+                  </div>
+                </div>
               </div>
-            </div> {{!-- .containerTitle --}}
-          </div> {{!-- container inlineB pantry --}}
-        </div> {{!-- .col-xs-12 col-md-6 --}}
-      </div> {{!-- .row --}}
+            </div>
+          </div> {{!-- .col-md-12 --}}
+        </div> {{!-- .row --}}
 
 
 
-      <div class="row">
-        <div class="container col-md-12">
+        <div class="col-md-12">
 
-            <label for="preferences">Special Diet: </label>
-            <br>
-              <label class="checkbox-inline"><input type="checkbox" value="1" id="vegan">Vegan</label>
-              <label class="checkbox-inline"><input type="checkbox" value="1" id="vegetarian">Vegetarian</label>
-              <label class="checkbox-inline"><input type="checkbox" value="1" id="glutenFree">Gluten-Free</label>
+          <div class="panel panel-default">
+            <div class="panel-heading">Ingredients
+            </div>
+            <div class="panel-body">
 
-            <br>
-            <br>
+              <div class="row">
+                <div class="col-md-8">
+                  <table class="table borderTable" id="ingrTable">
+                    <tr>
+                      <th>Ingredient</th>
+                      <th>Amount</th>
+                      <th>Unit</th>
+                    </tr>
+                  </table>
+                  <br>
+
+                  <div class="row">
+                    <div class="col-md-4">
+
+                      <label for="ingredientName">Choose Ingredient</label>
+                      <input type="text" class="form-control" id="ingredientName">
+                    </div>{{!-- .col-md-4 --}}
+
+                    <div class="col-md-2">
+                      <label for="ingredientAmount">Amount: </label>
+                      <input type="text" class="form-control" id="ingredientAmount">
+                    </div>{{!-- .col-md-2 --}}
+
+                    <div class="col-md-2">
+                      <label for="ingredientUnit">Units: </label>
+                      <input type="text" class="form-control" id="ingredientUnit">
+                    </div>{{!-- .col-md-2 --}}
+                  </div>{{!-- .row --}}
+                </div> {{!-- .col-md-8 --}}
+
+                <div class="col-md-4">
+                  <label for="list">Ingredient List: </label>
+
+                  <div class="panel-body scroll-area">
+                    <div class="ingredientContainer" id="pantryList">
+                      {{! ***** ingredients grouped by categories go here}}
+                      {{#each categories}}
+                        <div>
+                          <h4 class="categorySection">{{this.className}}</h4>
+                          <ul class = "categoryUL catID{{this.id}}">
+
+                          </ul>
+                        </div>
+                      {{/each}}
+                    </div> {{!-- .ingredientContainer --}}
+                  </div> {{!-- /scroll-area --}}
+                </div>
+
+
+                <div class="col-md-8">
+                  <button type="button" class="btn btn-default form-control" id="addToList">Add Ingredient</button>
+                </div> {{!-- .col-md-8 --}}
+
+
+              </div> {{!-- .row --}}
+            </div> {{!-- .panel-body --}}
+          
+          </div> {{!-- .panel panel-default --}}
+        </div class="container col-md-12">
+
+        {{!-- form submit button  --}}
+        <button type="button" id="submitRecipe" class="btn btn-default form-control" align="center">Add Recipe</button>
+
+
+      </form>
+    </div>{{!-- .container --}}
+  </section>{{!-- #addRecipe --}}
+</div>
 
 
 
-            <label for="instructions">Instructions: </label>
-            <textarea class="form-control" rows="8" id="instructions" id="instructions"></textarea>
 
-            {{!-- form submit button  --}}
-            <button type="button" id="submitRecipe" class="btn btn-default form-control" align="center">Add Recipe</button>
 
-        </div>{{!-- .container col-md-12 --}}
-      </div>{{!-- .row --}}
-    </form>
-  </div>{{!-- .container --}}
-</section>{{!-- #addRecipe --}}
 
 <script>
- {{! *** CREATE THE HTML FOR EACH INGREDIENT **** --}}
-  {{! ********* AND APPEND IT TO THE APPROPRIATE DIVISION ******* --}}
+  {{! *** CREATE THE HTML FOR EACH INGREDIENT ****}}
+  {{! ********* AND APPEND IT TO THE APPROPRIATE DIVISION *******}}
 
   {{#each ingredients}}
 
@@ -154,6 +282,9 @@ button {margin-left: 10px;
 
     $('#pantryList').find('.catID{{this.CategoryId}}').append(ingredientLI);
   {{/each}}
+
+
+
 
 $(document).ready(function() {
 
@@ -196,7 +327,10 @@ $(document).ready(function() {
     event.stopPropagation();
     console.log("ingredientInfo: ", ingredientInfo);
     var recipeTitle = $('#title').val().trim();
-    if (recipeTitle) {
+    var servings = (isNaN($('#servings').val()) ? 0 : $('#servings').val().trim());
+    var prepMins = (isNaN($('#prepMins').val()) ? 0 : $('#prepMins').val().trim());
+    var cookMins = (isNaN($('#cookMins').val()) ? 0 : $('#cookMins').val().trim());
+    if ((recipeTitle) && (ingredientInfo.length > 0)) {
 
       var data = {
         title: recipeTitle,
@@ -205,9 +339,9 @@ $(document).ready(function() {
         vegan: $('#vegan').val().trim(),
         vegetarian: $('#vegetarian').val().trim(),
         glutenFree: $('#glutenFree').val().trim(),
-        servings: $('#servings').val().trim(),
-        preparationMinutes: $('#prepMins').val().trim(),
-        cookingMinutes: $('#cookMins').val().trim(),
+        servings: servings,
+        preparationMinutes: prepMins,
+        cookingMinutes: cookMins,
         instructions: $('#instructions').val().trim(),
         spoonID: 0,
         ingredients: ingredientInfo
@@ -216,10 +350,16 @@ $(document).ready(function() {
         type: 'POST',
         data: JSON.stringify(data),
         contentType: 'application/json',
-        url: 'addRecipe'
-        })
-    } else
-    { console.log("need a recipe title");}
+        url: 'addRecipe',
+        success: function(data, textStatus, jqXHR){
+          $('form').find("input[type=text], textarea").val("");
+          $('form').find("input[type=checkbox]").attr('checked',false);
+          if (typeof(data.redirect) == 'string') {window.location = data.redirect}
+        }
+      })
+    } else {
+      $('#status').append("need a recipe title and at least one ingredient");
+    }
   });
 });
 

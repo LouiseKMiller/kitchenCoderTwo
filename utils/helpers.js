@@ -1,7 +1,7 @@
-
 var Recipe = require('../models')["Recipe"];
 var Ingredient = require('../models')["Ingredient"];
 var Category = require('../models')["Category"];
+var GroceryListItem = require('../models')["GroceryListItem"];
 
 
 var helpers = {
@@ -20,13 +20,18 @@ var helpers = {
 				order: ['className']
 			})
 			.then (function(categories){
-				var hbsObject = {
-					categories: categories,
-					ingredients: ingredients};
-				res.render(hblPage, hbsObject);
-			})
-			.catch(function(err) {
-				console.log('Error occurred in helpers.findAllIngredients function:', err);
+				GroceryListItem.findAll()
+				.then (function(groceryListItems){
+					var hbsObject = {
+						categories: categories,
+						ingredients: ingredients,
+						groceryListItems: groceryListItems};
+					console.log(groceryListItems);
+					res.render(hblPage, hbsObject);
+				})
+				.catch(function(err) {
+					console.log('Error occurred in helpers.findAllIngredients function:', err);
+				})
 			})
 		})
 	},
@@ -77,6 +82,49 @@ var helpers = {
 			console.log('Error occurred in helpers.updateIngredientPantryStatus function:', err);
 		})
 	},
+
+
+	addGroceryListItem: function(req, res) {
+		// return number of recipes you can now make
+		// ************** TO DO *************************************
+		return GroceryListItem.create({
+			note: req.body.note, 
+			name: req.body.name
+			})
+		.then (function(groceryListItem){
+			Ingredient.find({where: {id: req.params.id}})
+				.then (function(ingredient){
+					groceryListItem.setIngredient(ingredient);
+				})
+			})
+		.catch(function(err) {
+			console.log('Error occurred in helpers.addGroceryListItem function:', err);
+		})
+	},
+
+	clearAllGroceryList: function(req, res) {
+		// return number of recipes you can now make
+		// ************** TO DO *************************************
+		return GroceryListItem.destroy({truncate: true})
+		.catch(function(err) {
+			console.log('Error occurred in helpers.clearIngredientGroceryList function:', err);
+		})
+	},
+
+	deleteGroceryListItem: function(req, res) {
+		// return number of recipes you can now make
+		// ************** TO DO *************************************
+		return GroceryListItem.findAll()
+		.then(function(groceryListItems){
+			GroceryListItem.destroy({truncate: true})
+		})
+		.catch(function(err) {
+			console.log('Error occurred in helpers.clearIngredientGroceryList function:', err);
+		})
+	},
+
+
+
 //=====================================================================
 //    HELPER FUNCTIONS FOR RECIPES
 //
@@ -155,20 +203,26 @@ var helpers = {
 		var vegetarian = ((req.body.vegetarian) ? true : false);
 		var vegan = ((req.body.vegan) ? true : false);
 		var glutenFree = ((req.body.glutenFree) ? true : false);
-		console.log ("ingredients: ", req.body.ingredients);
-		return Recipe.create(
-			{title: req.body.title,
+
+		var newRecipe = {
+			title: req.body.title,
 			cuisine: req.body.cuisine,
 			type: req.body.type,
 			vegan: vegan,
 			glutenFree: glutenFree,
 			vegetarian: vegetarian,
-			servings: parseInt(req.body.servings),
-			preparationMinutes: parseInt(req.body.preparationMinutes),
-			cookingMinutes: parseInt(req.body.cookingMinutes),
 			instructions: req.body.instructions,
-			spoonID: parseInt(req.body.spoonID)
-		})
+			spoonID: parseInt(req.body.spoonID)			
+		};
+
+		if (!isNaN(parseInt(req.body.servings)))	{
+			newRecipe.servings = parseInt(req.body.servings)};
+		if (!isNaN(parseInt(req.body.preparationMinutes))) {
+			newRecipe.preparationMinutes = parseInt(req.body.preparationMinutes)};
+		if (!isNaN(parseInt(req.body.cookingMinutes))) {
+			newRecipe.cookingMinutes = parseInt(req.body.cookingMinutes)};
+
+		return Recipe.create(newRecipe)
 		.then (function(recipe){
 			var ingredientsArray = req.body.ingredients;
 			var ingredientIDs = ingredientsArray.map(function(eachIngredient){
@@ -190,11 +244,16 @@ var helpers = {
                                 ingredient,
                                 {amount: ingredientsArray[index].amount,
                                  unit: ingredientsArray[index].unit}
-                            );
+                            )
+                            .then(function(){
+                            	var sendUrl = '/oneRecipe/' + recipe.id;
+                            	console.log("you are here", sendUrl);
+                            	res.send({redirect: sendUrl});
+                            })
+							.catch(function(err){
+								console.log('Error occurred in helpers.addRecipe function:', err);
                         });
                     })
-				.catch(function(err){
-					console.log('Error occurred in helpers.addRecipe function:', err);
 				})
 		})
 	}

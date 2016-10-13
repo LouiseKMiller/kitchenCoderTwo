@@ -43,8 +43,8 @@ router.get('/home', function (req, res) {
 // GET REQUEST TO URI  - /INGREDIENT
 // find all ingredients
 // and pass to handlebars to process further
-router.get('/ingredient', function(req, res) {
-	var hblPage = 'ingredient';
+router.get('/myPantry', function(req, res) {
+	var hblPage = 'myPantry';
 	helpers.findAllIngredients(req, res, hblPage);
 	// res.render('ingredient', hbsObject); // this is done in helper routine
 });
@@ -56,21 +56,48 @@ router.get('/ingredient', function(req, res) {
 // router.post('/ingredient/update', function(req, res) {
 // 	helpers.createIngredient(req, res)
 // 	});
-router.post('/ingredient/update', function(req, res) {
+router.post('/myPantry/update', function(req, res) {
 	helpers.createIngredient(req, res)
 	.then (function(){
-		res.redirect('/ingredient');
+		res.redirect('/myPantry');
 	});
 });
 
 // PUT REQUEST TO URI  - /INGREDIENT/UPDATE/:id
 // user identifies an ingredient and a change to the inStock status
 // we update the database with that information
-router.post('/ingredient/update/:id', function(req, res) {
+router.post('/myPantry/update/:id', function(req, res) {
 	helpers.updateIngredientPantryStatus(req, res)
 	.then (function(){
 		console.log("you are here", req.body.inPantry);
 		res.json(req.body.inPantry);
+	});
+});
+
+// PUT REQUEST TO URI  - /INGREDIENT/groceryList/:id
+// user identifies an ingredient and a change to the groceryList status
+// we update the database with that information
+router.post('/groceryList/add/:id', function(req, res) {
+	helpers.addGroceryListItem(req, res)
+	.then (function(result){
+		console.log("groceryList add", result);
+		res.json(req.body.note);
+	});
+});
+
+router.post('/groceryList/delete/:id', function(req, res) {
+	helpers.deleteGroceryListItem(req, res)
+	.then (function(){
+		console.log("groceryList delete", req.body.groceryList);
+		res.json(req.body.groceryList);
+	});
+});
+
+
+router.get('/groceryList/clear', function(req, res) {
+	helpers.clearAllGroceryList(req, res)
+	.then (function(){
+		res.send("list cleared");
 	});
 });
 
@@ -93,7 +120,6 @@ router.post('/ingredient/update/:id', function(req, res) {
 router.get('/findRecipe', function (req, res) {
 	var hblPage = 'findRecipe';
 	helpers.findAllIngredients(req, res, hblPage);
-
 });
 
 router.post('/findRecipe', function (req, res) {
@@ -132,7 +158,7 @@ router.get('/addRecipe', function (req, res) {
 //
 router.post('/addRecipe', function (req, res) {
 	helpers.addRecipe(req, res);
-	res.render('addRecipe');
+//	res.render('addRecipe');
 });
 
 //******************************************************
@@ -146,7 +172,7 @@ router.post('/addRecipe', function (req, res) {
 //
 //
 router.get('/admin', function (req, res) {
-		var message = "What kind of recipes are you looking for?";
+		var message = "What are you hungry for?";
 		var hbsobject = {message};
 		res.render('admin', hbsobject);
 	});
@@ -156,6 +182,13 @@ router.post('/admin', function (req, res) {
 		var hbsobject = {message};
 		res.render('admin', hbsobject);
 	});
+});
+
+router.get('/signOut', function (req, res) {
+
+	// req.logout();
+  res.redirect('home');
+
 });
 
 //******************************************************

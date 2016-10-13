@@ -1,0 +1,155 @@
+
+
+{{!-- ************* MAIN HEADING ********************************** --}}
+<div class="background-area content">
+  <div class="containerTitle blurBackground">
+    <h1 class="heading">What's in the pantry?</h1>
+  </div>
+  <div class="container">
+    {{! ************* DIVISION FOR LIST OF CATEGORIES ************************** -}}
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">Select A Category
+        </div>
+        <div class="panel-body scroll-area">
+          <div class="ingredientContainer" id="catList">
+
+            {{#each categories}}
+              <div>
+                <h4 class="categorySection" id="catButton{{this.id}}" data-catID="{{this.id}}">{{this.className}}<i class="fa fa-hand-o-right pull-right"></i></h4>
+              </div>
+            {{/each}}
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{! ************* DIVISION FOR INGREDIENTS IN SELECTED CATEGORY ************************** -}}
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">Check Ingredients
+        </div>
+
+        <div class="panel-body scroll-area">
+          <div class="ingredientContainer" id="pantryList">
+
+            {{#each categories}}
+              <div>
+                <ul class = "list-group categoryUL catID{{this.id}} hidden">
+                <h4>{{this.className}}</h4>
+                <hr>
+                {{! ***** ingredients go here}}
+                </ul>
+              </div>
+            {{/each}}
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{! ************* DIVISION FOR GROCERY LIST}}
+    <div class="col-md-4">
+      <div class="panel panel-default createGroceryList">
+        <div class="panel-heading">Grocery List</div>
+        <div class="panel-body">
+          <div>
+            <div class="categoryContainer">
+              <ul id="groceryList">
+
+                {{#each groceryListItems}}
+                  <li>{{this.name}}  ---  {{this.note}}</li>
+
+                {{/each}}
+              </ul>
+            </div>
+                  </br>
+                  </br>
+                  </br>
+                  </hr>
+            <button type="button" class="btn btn-default" id="printList" ><i class="fa fa-print"></i> Print</button>
+            <button type="button" class="btn btn-default" id="clearList"><i class="fa fa-trash"></i> Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{!-- ************* DIVISION FOR FORM TO ADD INGREDIENT --}}
+    <div class="col-md-offset-2 col-md-8">
+
+      <div class="containerTitle">
+        <div class="panel ">
+          <div class="panel-heading">Add New Ingredient</div>
+          <div class="panel-body">
+            <form role="form" class="create-update-form" action="myPantry/update" method="POST">
+              <div class="form-group">
+                <!-- Here we create the text box for capturing the search term-->
+                <label for="search">
+                </label>
+                </br>
+                <input type="text" class="form-control" id="bu" name="name">
+                </br>
+                <div class="categoryContainer" id="categoryList">
+                  <select name="category" class="form-control" id="categoryOptions">
+
+                  {{#each categories}}
+                    <option value="{{this.name}}">{{this.className}}</option>
+                  {{/each}}
+
+                  </select>
+                </div>
+                </br>
+                </br>
+                </br>
+                <button id="add" type="submit" class="btn btn-default" ><i class="fa fa-check-square"></i> Add Now</button>
+                <button type="button" class="btn btn-default" id="clearAll"><i class="fa fa-trash"></i> Clear Results</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+
+      </div>
+    </div>
+
+
+
+  </div>
+
+</div> {{!-- end of block div --}}
+
+
+
+
+{{!--  ******************SCRIPT FILE HERE ***************** --}}
+<script>
+  {{!-- *********** CREATE THE HTML FOR EACH INGREDIENT **** --}}
+  {{!-- ********* AND APPEND IT TO THE APPROPRIATE DIVISION ******* --}}
+
+  {{#each groceryListItems}}
+    console.log({{this.[0]}});
+  {{/each}}
+
+  {{#each ingredients}}
+
+    var ingredientLI = $('<li>');
+
+    var pantryStatus = ({{this.inPantry}} ? "0" : "1");
+    var statusStyle =({{this.inPantry}} ? "inPantryStyle" : "allOutStyle");
+    var iconClass =({{this.inPantry}} ? "fa fa-check pull-left" : "fa fa-ban pull-left");
+
+    ingredientLI.append('<button data-name="{{this.name}}" data-id="{{this.id}}" data-pantryStatus="' + pantryStatus + '" class="ingrButton ' + statusStyle + '" type="button">{{this.name}}<i class= "' + iconClass + '">&nbsp</i></button>')
+
+    ingredientLI.append('<button data-name="{{this.name}}" data-id="{{this.id}}" class="groceryListButton"><i class = "fa fa-list-ol"></i></button>');
+
+    $('#pantryList').find('.catID{{this.CategoryId}}').append(ingredientLI);
+  {{/each}}
+
+
+  var target = '.catID' + '{{categories.[0].id}}';
+  var catButton = '#catButton' + '{{categories.[0].id}}';
+</script>
+
+<script src="../js/myPantry.js"></script>

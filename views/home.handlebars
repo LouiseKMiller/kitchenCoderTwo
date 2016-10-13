@@ -1,64 +1,209 @@
-{{!-- header-img start ============================== --}}
-    <section id="hero-area">
-      <img class="img-responsive" src="images/header.jpg" alt="">
-    </section>
 
 
-{{!-- Slider start ============================== --}}
-    <section id="slider">
-        <div class="container">
+  <div data-vide-bg="video/tr">
+    <div class="banner">
+      <div class="container">
+        <video id="bgvid" playsinline autoplay muted loop>
+          <source src="videos/tr.mp4" type="video/mp4">
+        </video>
+        <div class="w3ls_banner_info">
+          <h3>Welcome To  Kitchen Recipes </h3>
+
+          <div class="g-signin2" data-onsuccess="onSignIn">
+            <a href="/signOut" onclick="signOut();">Sign out</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--banner-->
+
+  <!--content-->
+  <div class="content">
+    <!--menu-->
+    <div class="special-w3">
+      <div class="container">
+        <br>
+
+        <div class="special-grids ">
+          <div class="col-md-4 menu-grid">
+            <div class="menu1">
+              <img src="images/m2.jpg" class="img-responsive gray" alt="ingredients">
+                <a href="/myPantry">
+                  <div class="menu-icon hvr-sweep-to-top">
+                  <i class="glyphicon glyphicon-cutlery" aria-hidden="true"></i>
+                </div>
+                </a>
+            </div>
+            <div class="menu-bottom">
+              <h4>Update My Pantry</h4>
+              <p>What do I have to cook?</p>
+              <a href="/myPantry" class="button  hvr-sweep-to-bottom">Go to My Pantry</a>
+            </div>
+          </div>
+
+          <div class="col-md-4 menu-grid">
+            <div class="menu1">
+              <img src="images/m4.jpg" class="img-responsive gray" alt="Recipes">
+                <a href="/findRecipe">
+                  <div class="menu-icon hvr-sweep-to-top">
+                   <i class="glyphicon glyphicon-cutlery" aria-hidden="true"></i>
+                 </div>
+                </a>
+            </div>
+            <div class="menu-bottom">
+              <h4>Find A Recipe</h4>
+              <p>What am I hungry for?</p>
+              <a href="/findRecipe" class="button  hvr-sweep-to-bottom">Go to Find Recipe</a>
+            </div>
+          </div>
+
+
+          <div class="col-md-4 menu-grid">
+            <div class="menu1">
+              <img src="images/m5.jpg" class="img-responsive gray" alt="Add recipes">
+               <a href="/addRecipe">
+                <div class="menu-icon hvr-sweep-to-top">
+                  <i class="glyphicon glyphicon-cutlery" aria-hidden="true"></i>
+                </div>
+              </a>
+            </div>
+            <div class="menu-bottom">
+              <h4>Add A Recipe</h4>
+              <p>Manage my favorite recipes</p>
+              <a href="/addRecipe" class="button  hvr-sweep-to-bottom">Go to My Cookbook</a>
+            </div>
+          </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+{{!--    footer  start ============================= --}}
+    <section id="footer" class= "special-w3">
+        <div class="container ">
             <div class="row">
-                <div class="col-md-12">
-                    <div class="block wow fadeInUp" data-wow-duration="500ms" data-wow-delay="300ms">
-                        <div class="title">
-                            <h3>A recipe application for you and what's in your fridge.</h3>
-                        </div>
-                        <div id="owl-example" class="owl-carousel">
-                            <div>
-                                <img class="img-responsive" src="images/slider/slider-img-1.jpg" alt="">
-                            </div>
-                            <div>
-                                <img class="img-responsive" src="images/slider/slider-img-2.jpg" alt="">
-                            </div>
-                            <div>
-                                <img class="img-responsive" src="images/slider/slider-img-3.jpg" alt="">
-                            </div>
-                            <div>
-                                <img class="img-responsive" src="images/slider/slider-img-4.jpg" alt="">
-                            </div>
-                            <div>
-                                <img class="img-responsive" src="images/slider/slider-img-1.jpg" alt="">
-                            </div>
-                            <div>
-                                <img class="img-responsive" src="images/slider/slider-img-2.jpg" alt="">
-                            </div>
-                            <div>
-                                <img class="img-responsive" src="images/slider/slider-img-3.jpg" alt="">
-                            </div>
-                            <div>
-                                <img class="img-responsive" src="images/slider/slider-img-4.jpg" alt="">
-                            </div>
-                        
+                <div class="col-md-4">
+                    <div class="block wow fadeInLeft"  data-wow-delay="200ms">
+                        <h3>CONTACT <span>INFO</span></h3>
+                        <div class="info">
+                            <ul>
+                                <li>
+                                  <h4><i class="fa fa-phone"></i>Telephone</h4>
+                                  <p>512-000-0000</p>
+
+                                </li>
+                                <li>
+                                  <h4><i class="fa fa-map-marker"></i>Address</h4>
+                                  <p>Northcross, 2525 W Anderson Ln #365, Austin, TX 78757</p>
+                                </li>
+                                <li>
+                                  <h4><i class="fa fa-envelope"></i>E mail</h4>
+                                  <p>kitchencoders@gmail.com</p>
+
+                                </li>
+                            </ul>
                         </div>
                     </div>
-                </div>{{!-- .col-md-12 close --}}
-            </div>{{!-- .row close --}}
-        </div>{{!-- .container close --}}
-    </section>{{!-- slider close --}}
+                </div>
+                <!-- .col-md-4 close -->
+                <div class="col-md-4">
+                    <div class="block wow fadeInLeft"  data-wow-delay="700ms">
+                        <h3> CONNECT <span> With Us!</span></h3>
+                        <div class="blog">
+                            <div class="form-group">
+                                <label for="form_name">Firstname *</label>
+                                <input id="form_name" type="text" name="name" class="form-control" placeholder="Please enter your firstname *" required="required" data-error="Firstname is required.">
 
-{{!-- Options Starts Here : ============================== --}}
-    <section id="about-us">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="block">
-                        <img class="wow fadeInUp" data-wow-duration="300ms" data-wow-delay="400ms" src="images/cooker-img.png" alt="cooker-img">
-                        <h1 class="heading wow fadeInUp" data-wow-duration="400ms" data-wow-delay="500ms" >What <span> would you like to do ? </span> </br> 
-                        <button><a href="/recipe">Go to recipes</a></button>
-                        </h1>
-                        <h1> <button> <a href="/ingredient">Go to Ingredients</a></button> </h1>
+                                <label for="form_phone">Phone</label>
+                                <input id="form_phone" type="tel" name="phone" class="form-control" placeholder="Please enter your phone">
+                                <div class="help-block with-errors"></div>
+
+                                <label for="form_message">Message *</label>
+                                <textarea id="form_message" name="message" class="form-control" placeholder="Message for me *" rows="4" required="required" data-error="Please,leave us a message."></textarea>
+                                <div class="help-block with-errors"></div>
+
+                                <input type="submit" class="btn btn-success btn-send" value="Send message">
+                                <p class="text-muted"><strong>*</strong> These fields are required<a href="http://bootstrapious.com" target="_blank"></a>.</p>
+                            </div>
+                        </div>
                     </div>
-                </div>{{!-- .col-md-12 close --}}
-            </div>{{!-- .row close --}}
-        </div>{{!-- .containe close --}}
-    </section>{{!-- #call-to-action close --}}
+                </div>
+                <!-- .col-md-4 close -->
+                <div class="col-md-4">
+                    <div class="block wow fadeInLeft"  data-wow-delay="1100ms">
+                        <div class="gallary">
+                            <h3>PHOTO <span>STREAM</span></h3>
+                            <ul>
+                                <li>
+                                    <a href="#"><img src="/images/photo/photo-1.jpg" alt=""></a>
+                                </li>
+                                <li>
+                                    <a href="#"><img src="/images/photo/photo-2.jpg" alt=""></a>
+                                </li>
+                                <li>
+                                    <a href="#"><img src="/images/photo/photo-3.jpg" alt=""></a>
+                                </li>
+                                <li>
+                                    <a href="#"><img src="/images/photo/photo-4.jpg" alt=""></a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="social-media-link">
+                            <h3>Follow <span>US</span></h3>
+                            <ul>
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-twitter"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-facebook"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-dribbble"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-behance"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- .col-md-4 close -->
+            </div><!-- .row close -->
+        </div><!-- .containe close -->
+    </section><!-- #footer close -->
+<script src="https://apis.google.com/js/platform.js" async defer>
+
+function onSignIn(googleUser) {
+  var profile = googleUser.getBasicProfile();
+  console.log('ID: ' + profile.getId());
+  {{!-- Do not send to your backend! Use an ID token instead. --}}
+  console.log('Name: ' + profile.getName());
+  console.log('Image URL: ' + profile.getImageUrl());
+  console.log('Email: ' + profile.getEmail());
+}
+ function signOut() {
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      console.log('User signed out.');
+    });
+  }
+
+</script>
+
+
+
+
+

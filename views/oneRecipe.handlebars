@@ -1,24 +1,12 @@
 <style>
-h2 {
-  text-align: center;
-  margin-top: 25px;
-  font-size: 30px;
-  color: green;
-}
-h4 {
-  margin-top: 10px;
-  margin-bottom: 0px;
-}
-button {
-margin: 10px;
-margin-top: 15px;
-}
+
 
 .recipePic {
-  margin-left: auto;
-  margin-right: auto;
-  width: 300px;
-  height: 300px;
+  margin: 3em auto;
+  width: 100%;
+  height: 40em;
+  border: 2px solid white;
+  border-radius: 4px;
 }
 
 .instructions {
@@ -29,51 +17,133 @@ margin-top: 15px;
   font-size: 25px;
 }
 
+.infoBlock {
+  background-color: white;
+  border-radius: 4px;
+  padding: 4em;
+  opacity: 0.8;
+  border: 1px solid white;
+  margin: 3em auto;
+}
+
+.limitHeight {
+  height: 40em;  
+}
+
+h3 {
+  font-size: 25px;
+  line-height: 35px;
+}
+
+h2 {
+  font-size: 20px;
+  line-height: 30px;
+  color: red;
+}
+
+.infoBlock a {
+  font-size: 15px;
+  line-height: 20px;
+  color: green;
+  word-break:break-all;
+}
+
+th {
+  font-size: 19px;
+  font-weight: 800;
+}
+
+td {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+p{
+  font-size: 15px;
+  line-height: 30px;
+}
+
 </style>
 
   {{! ************* MAIN HEADING}}
+
+<div class="background-area content">
+  <div class="containerTitle blurBackground">
+    <h1 class="heading">{{recipe.title}}</h1>
+  </div>
   <div class="container">
-    <div class="row"
-      <div class="col-md-12">
-        <div class="block">
-          <h1 class="heading"><span> {{recipe.title}} </span></h1>
 
+
+    <div class="row">
+      <div class="col-md-7">
           <img class="recipePic" src={{recipe.image}}>
+      </div>
+      <div class="col-md-5 infoBlock limitHeight">
 
-          <h3>Preparation Minutes:&nbsp{{recipe.preparationMinutes}}</h3>
-          <h3>Cooking Minutes:&nbsp{{recipe.cookingMinutes}}</h3>
-          <h3>Ingredients</h3>
-          <ul>
-          {{#each ingredients}}
-            <li>
-              <span class="ingrInfo"> {{this.name}}</span>
-              <span class="ingrInfo"> -- {{this.Recipeingredients.amount}}</span>
-              <span class="ingrInfo"> {{this.Recipeingredients.unit}}</span>
-              {{#if this.inPantry}}
-                <span class="ingrInfo">-- In Stock</span>
-              {{else}}
-                <span class="ingrInfo">-- NOT In Stock</span>
-              {{/if}}
-            </li>
-          {{/each}}
-          </ul>
-          <h3>Instructions</h3>
-          <p class="instructions">{{recipe.instructions}}</p>
+        {{#if canMake}}
+          <h2>All Ingredients In Stock</h2>
+        {{else}}
+          <h2>You'll need to shop for some ingredients</h2>
+        {{/if}}
+        <hr>
+        <h3>Preparation Time: {{recipe.preparationMinutes}} minutes</h3>
+        <h3>Cooking Time: {{recipe.cookingMinutes}} minutes</h3>
+        <h3>Number of Servings:&nbsp{{servings}}</h3>
+        <hr>
+        <h3>Vegetarian: 
           {{#if vegetarian}}
-            <h2>Vegetarian</h2>
+            yes
+            {{else}}
+            no
           {{/if}}
+        <h3>Vegan: 
           {{#if vegan}}
-            <h2>Vegan</h2>
+            yes
+          {{else}}
+            no
           {{/if}}
+        <h3>Gluten Free:
           {{#if glutenFree}}
-            <h2>Gluten Free</h2>
+            yes
+          {{else}}
+            no
           {{/if}}
-          <h3>Number of Servings:&nbsp{{servings}}</h3>
+          <hr>
           <a href="{{recipe.sourceUrl}}">Source:&nbsp{{recipe.sourceUrl}}</a>
 
         </div>
+      </div> {{!-- .row --}}
+      <div class="col-md-6 infoBlock">
+
+        <table class="table borderTable">
+          <tr>
+            <th>Ingredient</th>
+            <th>Amount</th>
+            <th>Unit</th>
+            <th>In Stock</th>
+          </tr>
+          {{#each ingredients}}
+            <tr>
+              <td>{{this.name}}</td>
+              <td>{{this.Recipeingredients.amount}}</td>
+              <td>{{this.Recipeingredients.unit}}</td>
+              {{#if this.inPantry}}
+                <td>yes</td>
+              {{else}}
+                <td>no</td>
+              {{/if}}
+            </tr>
+          {{/each}}
+        </table>
+
       </div>
+      <div class="col-md-6 infoBlock">
+        <h3>Instructions</h3>
+        <hr>
+        <p class="instructions">{{recipe.instructions}}</p>
+      </div>
+
     </div>
   </div>
-
+</div>
 

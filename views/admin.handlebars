@@ -1,103 +1,119 @@
-<div class="row">
-  <div class="container col-md-6">
-    <div class="containerTitle">
-      <h2>Go Get Some Recipes For The Database</h2>
-    </div>
+<style>
+h3 {
+  text-align: center;
+  padding-bottom: 30px;
+  color: #ff530a;
+}
 
-    <h4 id="status">STATUS: {{message}}</h4>
-
-    <form class="create-update-form" action="../admin" method="POST">
-
-      <div class="form-group">
-        <label for="searchTerm">Search Term:</label>
-        <input class="form-control" type="text" name="searchTerm">
-      </div>
-
-      <div class="form-group">
-        <label for="cuisine">Type of Cuisine</label><br>
-        <select class="form-control" name="cuisine">
-          <option value="any" selected>Any</option>
-          <option value="African">African</option>
-          <option value="American">American</option>
-          <option value="British">British</option>
-          <option value="Cajun">Cajun</option>
-          <option value="Caribbean">Caribbean</option>
-          <option value="Chinese">Chinese</option>
-          <option value="Eastern+European">Eastern European</option>
-          <option value="German">German</option>
-          <option value="Greek">Greek</option>
-          <option value="Indian">Indian</option>
-          <option value="Irish">Irish</option>
-          <option value="Italian">Italian</option>
-          <option value="French">French</option>
-          <option value="Japanese">Japanese</option>
-          <option value="Jewish">Jewish</option>
-          <option value="Korean">Korean</option>
-          <option value="Latin+American">Latin American</option>
-          <option value="Mexican">Mexican</option>
-          <option value="Middle+Eastern">Middle Eastern</option>
-          <option value="Southern">Southern</option>
-          <option value="Spanish">Spanish</option>
-          <option value="Thai">Thai</option>
-          <option value="Vietnamese">Vietnamese</option>
-          <option value="Nordic">Nordic</option>
-        </select>
-      </div>
-
-    <div class="form-group">
-        <label for="diet">Type of Diet</label><br>
-        <select class="form-control" name="diet">
-          <option value="any">Any</option>
-          <option value="vegan">Vegan</option>
-          <option value="vegetarian">Vegetarian</option>
-        </select>
-      </div>
-
-    <div class="form-group">
-        <label for="type">Type of Meal</label><br>
-        <select class="form-control" name="type">
-          <option value="any">Any</option>
-          <option value="appetizer">Appetizer</option>
-          <option value="beverage">Beverage</option>
-          <option value="bread">Bread</option>
-          <option value="breakfast">Breakfast</option>
-          <option value="dessert">Dessert</option>
-          <option value="drink">Drink</option>
-          <option value="main+course">Main Course</option>
-          <option value="salad">Salad</option>
-          <option value="sauce">Sauce</option>
-          <option value="side+dish">Side Dish</option>
-          <option value="soup">Soup</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="excludeIngredients">Exclude these Ingredients: (ex: eggs, milk, peanuts)</label>
-        <input class="form-control" type="text" name="excludeIngredients">
-      </div>
-
-      <div class="form-group">
-        <label for="intolerances">Intolerances</label><br>
-        <p>Hold down the Ctrl (windows) / Command (Mac) button to select multiple options.</p>
-        <select class="form-control" name="intolerances" multiple>
-          <option value="none" selected>None</option>
-          <option value="dairy">Dairy</option>
-          <option value="egg">Egg</option>
-          <option value="gluten">Gluten</option>
-          <option value="peanut">Peanut</option>
-          <option value="sesame">Sesame</option>
-          <option value="seafood">Seafood</option>
-          <option value="shellfish">Shellfish</option>
-          <option value="soy">Soy</option>
-          <option value="sulfite">Sulfite</option>
-          <option value="tree+nut">Tree Nut</option>
-          <option value="wheat">Wheat</option>
-        </select>
-      </div>
-
-      <button type="submit">Get Recipes Now</button>
-    </form>
-
+</style>
+<div class="background-area content">
+  <div class="containerTitle blurBackground">
+    <h1 class="heading">Gather Recipes From The Web</h1>
+    <h3 id="status">{{message}}</h3>
   </div>
+
+<section id="admin">
+  <div class="container">
+    <form class="create-update-form" action="../admin" method="POST">
+      <div class="col-md-offset-2 col-md-8">
+        <div class="panel panel-default">
+          <div class="panel-heading">&nbsp</div>
+          <div class="panel-body">
+
+            <div class="form-group">
+              <label for="searchTerm">Search Term:</label>
+              <input class="form-control" type="text" name="searchTerm">
+            </div>
+
+            <div class="form-group">
+              <label for="cuisine">Type of Cuisine</label><br>
+              <select class="form-control" name="cuisine">
+                <option value="any" selected>Any</option>
+                <option value="African">African</option>
+                <option value="American">American</option>
+                <option value="British">British</option>
+                <option value="Cajun">Cajun</option>
+                <option value="Caribbean">Caribbean</option>
+                <option value="Chinese">Chinese</option>
+                <option value="Eastern+European">Eastern European</option>
+                <option value="German">German</option>
+                <option value="Greek">Greek</option>
+                <option value="Indian">Indian</option>
+                <option value="Irish">Irish</option>
+                <option value="Italian">Italian</option>
+                <option value="French">French</option>
+                <option value="Japanese">Japanese</option>
+                <option value="Jewish">Jewish</option>
+                <option value="Korean">Korean</option>
+                <option value="Latin+American">Latin American</option>
+                <option value="Mexican">Mexican</option>
+                <option value="Middle+Eastern">Middle Eastern</option>
+                <option value="Southern">Southern</option>
+                <option value="Spanish">Spanish</option>
+                <option value="Thai">Thai</option>
+                <option value="Vietnamese">Vietnamese</option>
+                <option value="Nordic">Nordic</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="diet">Type of Diet</label><br>
+              <select class="form-control" name="diet">
+                <option value="any">Any</option>
+                <option value="vegan">Vegan</option>
+                <option value="vegetarian">Vegetarian</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="type">Type of Meal</label><br>
+              <select class="form-control" name="type">
+                <option value="any">Any</option>
+                <option value="appetizer">Appetizer</option>
+                <option value="beverage">Beverage</option>
+                <option value="bread">Bread</option>
+                <option value="breakfast">Breakfast</option>
+                <option value="dessert">Dessert</option>
+                <option value="drink">Drink</option>
+                <option value="main+course">Main Course</option>
+                <option value="salad">Salad</option>
+                <option value="sauce">Sauce</option>
+                <option value="side+dish">Side Dish</option>
+                <option value="soup">Soup</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="excludeIngredients">Exclude these Ingredients: (ex: eggs, milk, peanuts)</label>
+              <input class="form-control" type="text" name="excludeIngredients">
+            </div>
+
+            <div class="form-group">
+              <label for="intolerances">Intolerances</label><br>
+              <p>Hold down the Ctrl (windows) / Command (Mac) button to select multiple options.</p>
+              <select class="form-control" name="intolerances" multiple>
+                <option value="none" selected>None</option>
+                <option value="dairy">Dairy</option>
+                <option value="egg">Egg</option>
+                <option value="gluten">Gluten</option>
+                <option value="peanut">Peanut</option>
+                <option value="sesame">Sesame</option>
+                <option value="seafood">Seafood</option>
+                <option value="shellfish">Shellfish</option>
+                <option value="soy">Soy</option>
+                <option value="sulfite">Sulfite</option>
+                <option value="tree+nut">Tree Nut</option>
+                <option value="wheat">Wheat</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-default">Get Recipes Now</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
 </div>
 

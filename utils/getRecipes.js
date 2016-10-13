@@ -244,12 +244,17 @@ if (searchParams.intolerances!=="none") {
                             className: ingr.category.replace(/[^,A-Z0-9]/ig, " ")}
                         })
                         .spread(function(cat, create){
+                            console.log("in loop: ", i);
+                            console.log("cat created?", create);
+                            console.log("created category:", cat.name);
                             i++;
-                            cat.addIngredient(ingr.id);
-                            forloop();
-                        })
-                        .catch(function(err) {
-                            console.log('Error occurred in processOneRecipe function:', err);
+                            cat.addIngredient(ingr.id)
+                            .then(function(){
+                                forloop();
+                            })
+                            .catch(function(err) {
+                                console.log('Error occurred in processOneRecipe function:', err);
+                            });
                         });
                 })
             }
