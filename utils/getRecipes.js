@@ -106,9 +106,9 @@ if (searchParams.intolerances!=="none") {
     function processAllRecipes(recipes, cuisine, type, intolerances){
         var j=0;
         function outerloop(){
-            if (j < recipes.length){
-    //        if (j < 2){
-                // FOR EACH RECIPE IN recipeResults array, you need to do two searches
+        // if (j < 2) {
+        if (j < recipes.length){
+                        // FOR EACH RECIPE IN recipeResults array, you need to do two searches
                 recipeID = recipes[j].id;
 
                 //first you need to search by recipeID and find the recipe information
